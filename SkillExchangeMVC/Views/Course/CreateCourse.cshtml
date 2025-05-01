@@ -1,0 +1,114 @@
+﻿@* Course/CreateCourse.cshtml *@
+@model CourseViewModel
+
+<!-- Form to Add a New Course -->
+<h3>Add New Course</h3>
+<form method="post">
+    <div class="form-group">
+        <label for="Title">Title</label>
+        <input type="text" id="Title" asp-for="Course.Title" class="form-control" required />
+        <span asp-validation-for="Course.Title" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label for="Description">Description</label>
+        <textarea id="Description" asp-for="Course.Description" class="form-control" rows="1" required></textarea>
+        <span asp-validation-for="Course.Description" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label for="Category">Category</label>
+        <select id="Category" asp-for="Course.Category" class="form-control" onchange="updateSubCategories()" required>
+            <option value="" disabled selected>Select a category</option>
+            <option value="Technical">Technical</option>
+            <option value="Creative">Creative</option>
+            <option value="Business">Business</option>
+            <option value="Personal Development">Personal Development</option>
+            <option value="Other">Other</option>
+        </select>
+        <span asp-validation-for="Course.Category" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label for="SubCategory">Subcategory</label>
+        <select id="SubCategory" asp-for="Course.SubCategory" class="form-control">
+            <option value="" disabled selected>Select a subcategory</option>
+        </select>
+        <span asp-validation-for="Course.SubCategory" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label for="IsPremium">Is Premium Course?</label>
+        <input type="checkbox" id="IsPremium" asp-for="Course.IsPremium" class="form-check-input" />
+        <span asp-validation-for="Course.IsPremium" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-success">Save</button>
+</form>
+
+<hr />
+
+<!-- List of Available Courses -->
+<h2>Available Courses</h2>
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Course Id</th>
+            <th>Title</th>
+            <th>Category</th>
+            <th>Sub Category</th>
+            <th>Operation</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Courses?.Any() ?? false)
+        {
+            @foreach (var item in Model.Courses)
+            {
+                <tr>
+                    <td>@item.CourseId</td>
+                    <td>@item.Title</td>
+                    <td>@item.Category</td>
+                    <td>@item.SubCategory</td>
+                    <td>@item.IsPremium</td>
+                    <td>
+                        <a asp-page="/Admin/EditCourse" asp-route-id="@item.CourseId" class="btn btn-primary">Edit</a>
+                        <form method="post" asp-page-handler="Delete" asp-route-id="@item.CourseId" style="display:inline;">
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="5" class="text-center">No courses available.</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<script>
+    // Define subcategories for each main category
+    const subCategories = {
+        "Technical": ["Programming", "Networking", "AI and Machine Learning", "Cybersecurity"],
+        "Creative": ["Graphic Design", "Photography", "Video Editing"],
+        "Business": ["Finance", "Marketing", "Entrepreneurship"],
+        "Personal Development": ["Leadership", "Time Management", "Public Speaking"],
+        "Other": ["Miscellaneous"]
+    };
+
+    function updateSubCategories() {
+        const category = document.getElementById("Category").value;
+        const subCategoryDropdown = document.getElementById("SubCategory");
+
+        // Clear existing options
+        subCategoryDropdown.innerHTML = '<option value="" disabled selected>Select a subcategory</option>';
+
+        // Populate new subcategories
+        if (subCategories[category]) {
+            subCategories[category].forEach(subCategory => {
+                const option = document.createElement("option");
+                option.value = subCategory;
+                option.textContent = subCategory;
+                subCategoryDropdown.appendChild(option);
+            });
+        }
+    }
+</script>
