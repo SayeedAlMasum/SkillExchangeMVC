@@ -14,13 +14,6 @@ namespace SkillExchangeMVC.Controllers
             _skillExchangeContext = skillExchangeContext;
         }
 
-        public IActionResult Index()
-        {
-            // Initialize an empty login view model
-            var viewModel = new LoginViewModel();
-            return View(viewModel);
-        }
-
         public IActionResult CreateLogin()
         {
             var viewModel = new LoginViewModel();

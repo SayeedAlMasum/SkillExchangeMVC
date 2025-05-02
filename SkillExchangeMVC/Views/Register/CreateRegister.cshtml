@@ -1,0 +1,43 @@
+﻿@* Register/CreateRegister *@
+@model RegisterViewModel
+
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 70vh;">
+    <div class="card shadow-sm" style="width: 100%; max-width: 400px;">
+        <div class="card-body">
+            <h2 class="text-center mb-4">Sign Up</h2>
+
+            <form method="post">
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <div class="form-group mb-3">
+                    <label for="Name"> Name </label>
+                    <input type="text" asp-for="Name" class="form-control" />
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="Email">Email</label>
+                    <input type="email" asp-for="Email" class="form-control" />
+                </div>
+
+                <div class="form-group mb-4">
+                    <label for="Password">Password</label>
+                    <input type="password" asp-for="Password" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label for="Role">Role</label>
+                    <select asp-for="Role" class="form-control" required>
+                        <option value="">Select Role</option>
+                        <option value="Student">Student</option>
+                        <option value="Teacher">Teacher</option>
+                        <option value="Admin">Admin</option>
+                    </select>
+                </div><br />
+                <button type="submit" class="btn btn-primary">Register</button>
+
+                <p class="text-center mt-3">
+                    Already have an account? <a asp-page="/Login">Login here</a>
+                </p>
+            </form>
+        </div>
+    </div>
+</div>
