@@ -14,19 +14,21 @@ namespace SkillExchangeMVC.Controllers
 
         public IActionResult Index()
         {
+            // Fetch all courses from the database and pass to view
             var viewModel = new CourseViewModel
             {
                 Courses = _skillExchangeContext.Course.ToList()
             };
-            return View();
+            return View(viewModel);
         }
 
         public IActionResult CreateCourse()
         {
+            // Initialize an empty course + list of existing courses
             var viewModel = new CourseViewModel
             {
                 Courses =_skillExchangeContext.Course.ToList(),
-                Course= new Course() // Optional, since  ViewModel sets default
+                Course= new Course() //used to bind form input
             };
 
             return View(viewModel);
@@ -37,11 +39,14 @@ namespace SkillExchangeMVC.Controllers
         {
             if (ModelState.IsValid)
             {
+                // Add new course to the database
                 _skillExchangeContext.Course.Add(viewModel.Course);
                 _skillExchangeContext.SaveChanges();
+
+                // Redirect to clear the form (Post-Redirect-Get)
                 return RedirectToAction("CreateCourse");
             }
-            // Reload course list on validation failure
+            // Reload existing courses if form fails validation
             viewModel.Courses = _skillExchangeContext.Course.ToList();
             return View(viewModel);
         }

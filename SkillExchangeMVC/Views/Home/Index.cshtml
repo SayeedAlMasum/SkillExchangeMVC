@@ -1,8 +1,70 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿<!-- Hero Section -->
+<div class="foreground"></div>
+<div class="jumbotron jumbotron-fluid bg-gradient text-white text-center">
+    <div class="container">
+        <h1 class="display-4 font-weight-bold animated fadeIn text-primary">Unlock Your Potential with SkillExchange</h1>
+        <p class="lead animated fadeIn delay-1s text-light">Explore top courses, share your expertise, and join a community of learners.</p>
+        <a href="/UserCourse" class="btn btn-lg btn-light btn-rounded shadow-lg mt-3 animated fadeIn delay-2s">Start Learning Now</a>
+    </div>
+</div>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<!-- Featured Roles Section -->
+@* <div class="container mt-5"> *@
+@*     <h2 class="text-center text-primary mb-4">Featured Roles</h2> *@
+@*     <div class="row justify-content-center"> *@
+@*         @foreach (var role in Model.Roles) *@
+@*         { *@
+@*             <div class="col-md-5 mb-4"> *@
+@*                 <div class="card shadow-lg border-0 rounded-lg overflow-hidden animated fadeInUp delay-1s" style="background-color: rgba(255, 255, 255, 0.7); backdrop-filter: blur(5px);"> *@
+@*                     <div class="card-header text-center" style="background-color: transparent; border-bottom: 1px solid rgba(0, 0, 0, 0.1);"> *@
+@*                         <h5 class="card-title mb-0 text-primary">@role</h5> *@
+@*                     </div> *@
+@*                     <div class="card-body" style="background-color: transparent;"> *@
+@*                         <p class="card-text text-dark">Discover a world of opportunities and learning by engaging with this role. Perfect for skill development!</p> *@
+@*                         <a href="Review" class="btn btn-gradient btn-block">Learn More</a> *@
+@*                     </div> *@
+@*                 </div> *@
+@*             </div> *@
+@*         } *@
+@*     </div> *@
+@* </div> *@
+
+<!-- Testimonials Section -->
+<div class="container mt-5 mb-5">
+    <h2 class="text-center text-primary mb-4">What Our Users Are Saying</h2>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="testimonial-card text-center p-4">
+                <img src="" alt="User" class="rounded-circle mb-3">
+                <h5 class="text-primary">Jane Doe</h5>
+                <p class="text-muted">"SkillExchange transformed my career by allowing me to share my knowledge while learning new skills."</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="testimonial-card text-center p-4">
+                <img src="" alt="User" class="rounded-circle mb-3">
+                <h5 class="text-primary">John Smith</h5>
+                <p class="text-muted">"The courses I found on SkillExchange have been pivotal to advancing my career. Highly recommend!"</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="testimonial-card text-center p-4">
+                <img src="" alt="User" class="rounded-circle mb-3">
+                <h5 class="text-primary">Emily White</h5>
+                <p class="text-muted">"Joining SkillExchange opened doors to amazing learning opportunities. It's a great place to grow!"</p>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Call to Action Section -->
+<div class="container mt-5 text-center">
+    <h3 class="text-primary mb-4">Get Started with SkillExchange</h3>
+    <p class="text-dark">Ready to start your learning journey? Sign up today and access exclusive courses!</p>
+    <a href="Register" class="btn btn-success btn-lg btn-rounded pulse">Sign Up Now</a>
+</div>
+
+
+<!-- Footer Section -->
+<div class="footer bg-dark text-white text-center py-4 mt-5">
+    <p>&copy; 2025 SkillExchange | <a href="/Privacy" class="text-white">Privacy Policy</a> | <a href="/Terms" class="text-white">Terms of Service</a></p>
 </div>
