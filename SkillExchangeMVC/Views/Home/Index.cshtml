@@ -1,4 +1,5 @@
-﻿<!-- Hero Section -->
+﻿@* Home/Index.cshtml *@
+<!-- Hero Section -->
 <div class="foreground"></div>
 <div class="jumbotron jumbotron-fluid bg-gradient text-white text-center">
     <div class="container">
@@ -8,26 +9,6 @@
     </div>
 </div>
 
-<!-- Featured Roles Section -->
-@* <div class="container mt-5"> *@
-@*     <h2 class="text-center text-primary mb-4">Featured Roles</h2> *@
-@*     <div class="row justify-content-center"> *@
-@*         @foreach (var role in Model.Roles) *@
-@*         { *@
-@*             <div class="col-md-5 mb-4"> *@
-@*                 <div class="card shadow-lg border-0 rounded-lg overflow-hidden animated fadeInUp delay-1s" style="background-color: rgba(255, 255, 255, 0.7); backdrop-filter: blur(5px);"> *@
-@*                     <div class="card-header text-center" style="background-color: transparent; border-bottom: 1px solid rgba(0, 0, 0, 0.1);"> *@
-@*                         <h5 class="card-title mb-0 text-primary">@role</h5> *@
-@*                     </div> *@
-@*                     <div class="card-body" style="background-color: transparent;"> *@
-@*                         <p class="card-text text-dark">Discover a world of opportunities and learning by engaging with this role. Perfect for skill development!</p> *@
-@*                         <a href="Review" class="btn btn-gradient btn-block">Learn More</a> *@
-@*                     </div> *@
-@*                 </div> *@
-@*             </div> *@
-@*         } *@
-@*     </div> *@
-@* </div> *@
 
 <!-- Testimonials Section -->
 <div class="container mt-5 mb-5">
@@ -60,7 +41,7 @@
 <div class="container mt-5 text-center">
     <h3 class="text-primary mb-4">Get Started with SkillExchange</h3>
     <p class="text-dark">Ready to start your learning journey? Sign up today and access exclusive courses!</p>
-    <a href="Register" class="btn btn-success btn-lg btn-rounded pulse">Sign Up Now</a>
+    <a asp-controller="Register" asp-action="CreateRegister" class="btn btn-success btn-lg btn-rounded pulse">Sign Up Now</a>
 </div>
 
 

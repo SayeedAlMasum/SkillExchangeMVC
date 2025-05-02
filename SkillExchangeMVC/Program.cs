@@ -1,3 +1,5 @@
+//Startup.cs/Program.cs
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using SkillExchangeMVC.Models;
 
@@ -7,6 +9,17 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<SkillExchangeContext>(
     options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options =>
+{
+    options.LoginPath = "/Login/CreateLogin";
+    options.AccessDeniedPath = "/Home/AccessDenied";
+});
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
+    options.AddPolicy("RequireTeacherRole", policy => policy.RequireRole("Teacher"));
+    options.AddPolicy("RequireStudentRole", policy => policy.RequireRole("Student"));
+});
 
 var app = builder.Build();
 

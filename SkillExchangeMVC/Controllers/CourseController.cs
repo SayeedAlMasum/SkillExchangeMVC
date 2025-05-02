@@ -1,10 +1,12 @@
 ﻿//CourseController.cs
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SkillExchangeMVC.Models;
 using SkillExchangeMVC.Models.ViewModels;
 
 namespace SkillExchangeMVC.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class CourseController : Controller
     {
         private readonly SkillExchangeContext _skillExchangeContext;
@@ -12,6 +14,7 @@ namespace SkillExchangeMVC.Controllers
             _skillExchangeContext = skillExchangeContext;
         }
 
+        [Authorize(Roles = "Admin,Teacher,Student")]
         public IActionResult Index()
         {
             // Fetch all courses from the database and pass to view

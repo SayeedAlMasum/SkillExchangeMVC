@@ -1,8 +1,11 @@
 ﻿//LoginController.cs
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using SkillExchangeMVC.Models;
 using SkillExchangeMVC.Models.ViewModels;
+using System.Security.Claims;
 
 namespace SkillExchangeMVC.Controllers
 {
@@ -18,18 +21,14 @@ namespace SkillExchangeMVC.Controllers
         {
             var viewModel = new LoginViewModel();
             return View(viewModel);
-
         }
+
         [HttpPost]
-        public IActionResult CreateLogin(LoginViewModel viewModel)
+        public async Task<IActionResult> CreateLogin(LoginViewModel viewModel) // Marked as async
         {
-            // Step 1: Check if submitted form is valid
             if (ModelState.IsValid)
             {
-                // Step 2: Search for a user with the submitted email
                 var user = _skillExchangeContext.UserInfo.FirstOrDefault(u => u.Email == viewModel.Email);
-
-                // Step 3: If user found, verify password
                 if (user != null)
                 {
                     var hasher = new PasswordHasher<UserInfo>();
@@ -37,16 +36,20 @@ namespace SkillExchangeMVC.Controllers
 
                     if (result == PasswordVerificationResult.Success)
                     {
-                        // TODO:Set user session or Add authentication logic here
+                        var claims = new List<Claim>
+                        {
+                            new Claim(ClaimTypes.Name, user.Name ?? "User"),
+                            new Claim(ClaimTypes.Email, user.Email),
+                            new Claim(ClaimTypes.Role, user.Role ?? "Student") // Role must be present in DB
+                        };
 
-                        // Step 5: Redirect user based on role
-                        if (user.Role == "Admin")
-                            return RedirectToAction("CreateCourse", "Course");
+                        var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                        var principal = new ClaimsPrincipal(identity);
 
-                        else if (user.Role == "Teacher")
-                            return RedirectToPage("/Index");
-                        else
-                            return RedirectToAction("Index", "Course");
+                        // Sign in the user
+                        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+
+                        return RedirectToAction("Index", "Home");
                     }
                 }
 

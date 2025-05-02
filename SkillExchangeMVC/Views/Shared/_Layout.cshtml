@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@* _Layout.cshtml *@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -7,8 +8,11 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/SkillExchangeMVC.styles.css" asp-append-version="true" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="description" content="SkillExchange - Learn, Teach, and Share Skills Online.">
 </head>
 <body class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "landing-page" : "other-page")">
     <header>
@@ -26,23 +30,23 @@
                         <li class="nav-item">
                             <a class="nav-link text-white" asp-area="" asp-page="/Index">Home</a>
                         </li>
-                        @* <li class="nav-item"> *@
-                        @*     <a class="nav-link text-white" asp-area="" asp-page="Privacy">Privacy</a> *@
-                        </li>
+                        @* 
                         <li class="nav-item">
-                            @* <a class="nav-link text-white" asp-area="" asp-page="About">About</a> *@
+                            <a class="nav-link text-white" asp-area="" asp-page="About">About</a>
                         </li>
+                        *@
+
                         @if (User.IsInRole("Admin"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-white" asp-area="" asp-controller="Course" asp-action="CreateCourse">CreateCourse</a>
+                                <a class="nav-link text-white" asp-controller="Course" asp-action="CreateCourse">Create Course</a>
                             </li>
-                    
                         }
 
                         <li class="nav-item">
-                            <a class="nav-link text-white" asp-area="" asp-controller="Course" asp-action="Index">View Courses</a>
+                            <a class="nav-link text-white" asp-controller="Course" asp-action="Index">View Courses</a>
                         </li>
+
                         @if (User.IsInRole("Teacher"))
                         {
                             <li class="nav-item">
@@ -50,15 +54,16 @@
                             </li>
                         }
                     </ul>
+
                     <ul class="navbar-nav">
                         @if (User.Identity.IsAuthenticated)
                         {
                             <li class="nav-item">
-                                <span class="nav-link text-white">Welcome!</span>
+                                <span class="nav-link text-white">Welcome, @User.Identity.Name!</span>
                             </li>
                             <li class="nav-item">
-                                <form method="post" asp-page="/Account/Logout">
-                                    <button type="submit" class="nav-link btn btn-link text-white">Logout</button>
+                                <form method="post" asp-controller="Logout" asp-action="Index">
+                                    <button type="submit" class="nav-link btn btn-link text-white" aria-label="Logout">Logout</button>
                                 </form>
                             </li>
                         }
