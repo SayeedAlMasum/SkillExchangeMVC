@@ -8,7 +8,7 @@ namespace SkillExchangeMVC.Controllers
     {
 
         [HttpPost]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> IndexLogout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Index", "Home");

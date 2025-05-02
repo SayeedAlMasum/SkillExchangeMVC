@@ -44,7 +44,7 @@
                         }
 
                         <li class="nav-item">
-                            <a class="nav-link text-white" asp-controller="Course" asp-action="Index">View Courses</a>
+                            <a class="nav-link text-white" asp-controller="Course" asp-action="IndexCourse">View Courses</a>
                         </li>
 
                         @if (User.IsInRole("Teacher"))
@@ -62,7 +62,7 @@
                                 <span class="nav-link text-white">Welcome, @User.Identity.Name!</span>
                             </li>
                             <li class="nav-item">
-                                <form method="post" asp-controller="Logout" asp-action="Index">
+                                <form method="post" asp-controller="Logout" asp-action="IndexLogout">
                                     <button type="submit" class="nav-link btn btn-link text-white" aria-label="Logout">Logout</button>
                                 </form>
                             </li>

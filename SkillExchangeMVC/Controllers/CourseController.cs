@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SkillExchangeMVC.Models;
 using SkillExchangeMVC.Models.ViewModels;
+using System.Linq;
 
 namespace SkillExchangeMVC.Controllers
 {
@@ -10,28 +11,32 @@ namespace SkillExchangeMVC.Controllers
     public class CourseController : Controller
     {
         private readonly SkillExchangeContext _skillExchangeContext;
-        public CourseController(SkillExchangeContext skillExchangeContext) {
+
+        public CourseController(SkillExchangeContext skillExchangeContext)
+        {
             _skillExchangeContext = skillExchangeContext;
         }
 
         [Authorize(Roles = "Admin,Teacher,Student")]
-        public IActionResult Index()
+        public IActionResult IndexCourse()
         {
-            // Fetch all courses from the database and pass to view
             var viewModel = new CourseViewModel
             {
-                Courses = _skillExchangeContext.Course.ToList()
+                Courses = _skillExchangeContext.Course
+                            .OrderBy(c => c.CourseId)
+                            .ToList()
             };
             return View(viewModel);
         }
 
         public IActionResult CreateCourse()
         {
-            // Initialize an empty course + list of existing courses
             var viewModel = new CourseViewModel
             {
-                Courses =_skillExchangeContext.Course.ToList(),
-                Course= new Course() //used to bind form input
+                Courses = _skillExchangeContext.Course
+                            .OrderBy(c => c.CourseId)
+                            .ToList(),
+                Course = new Course()
             };
 
             return View(viewModel);
@@ -42,15 +47,14 @@ namespace SkillExchangeMVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                // Add new course to the database
                 _skillExchangeContext.Course.Add(viewModel.Course);
                 _skillExchangeContext.SaveChanges();
-
-                // Redirect to clear the form (Post-Redirect-Get)
                 return RedirectToAction("CreateCourse");
             }
-            // Reload existing courses if form fails validation
-            viewModel.Courses = _skillExchangeContext.Course.ToList();
+
+            viewModel.Courses = _skillExchangeContext.Course
+                                  .OrderBy(c => c.CourseId)
+                                  .ToList();
             return View(viewModel);
         }
     }
