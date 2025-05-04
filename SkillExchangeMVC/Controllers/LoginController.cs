@@ -25,7 +25,7 @@ namespace SkillExchangeMVC.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateLogin(LoginViewModel viewModel) // Marked as async
+        public async Task<IActionResult> CreateLogin(LoginViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
@@ -41,13 +41,12 @@ namespace SkillExchangeMVC.Controllers
                         {
                             new Claim(ClaimTypes.Name, user.Name ?? "User"),
                             new Claim(ClaimTypes.Email, user.Email),
-                            new Claim(ClaimTypes.Role, user.Role ?? "Student") // Role must be present in DB
+                            new Claim(ClaimTypes.Role, user.Role ?? "Student")
                         };
 
                         var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                         var principal = new ClaimsPrincipal(identity);
 
-                        // Sign in the user
                         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
                         return RedirectToAction("Index", "Home");
@@ -58,6 +57,84 @@ namespace SkillExchangeMVC.Controllers
             }
 
             return View(viewModel);
+        }
+
+        // Account-related actions
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult ForgotPassword(string email)
+        {
+            if (string.IsNullOrEmpty(email))
+            {
+                ModelState.AddModelError("Email", "Email is required.");
+                return View();
+            }
+
+            var user = _skillExchangeContext.UserInfo.FirstOrDefault(u => u.Email == email);
+            if (user == null)
+            {
+                ModelState.AddModelError("Email", "No user found with that email.");
+                return View();
+            }
+
+            user.PasswordResetToken = Guid.NewGuid().ToString();
+            user.ResetTokenExpires = DateTime.Now.AddHours(1);
+            _skillExchangeContext.SaveChanges();
+
+            return RedirectToAction("ForgotPasswordConfirmation", new { email = email, token = user.PasswordResetToken });
+        }
+
+        public IActionResult ForgotPasswordConfirmation(string email, string token)
+        {
+            ViewBag.Email = email;
+            ViewBag.Token = token;
+            return View();
+        }
+
+        public IActionResult ResetPassword(string email, string token)
+        {
+            var user = _skillExchangeContext.UserInfo.FirstOrDefault(u => u.Email == email && u.PasswordResetToken == token && u.ResetTokenExpires > DateTime.Now);
+            if (user == null)
+            {
+                return RedirectToAction("CreateLogin");
+            }
+
+            var model = new ResetPasswordViewModel { Email = email, Token = token };
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult ResetPassword(ResetPasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var user = _skillExchangeContext.UserInfo.FirstOrDefault(u => u.Email == model.Email && u.PasswordResetToken == model.Token && u.ResetTokenExpires > DateTime.Now);
+            if (user == null)
+            {
+                ModelState.AddModelError("", "Invalid or expired reset token.");
+                return View(model);
+            }
+
+            var hasher = new PasswordHasher<UserInfo>();
+            user.PasswordHash = hasher.HashPassword(user, model.NewPassword);
+            user.PasswordResetToken = null;
+            user.ResetTokenExpires = null;
+
+            _skillExchangeContext.SaveChanges();
+
+            return RedirectToAction("ResetPasswordConfirmation");
+        }
+
+        public IActionResult ResetPasswordConfirmation()
+        {
+            return View();
         }
     }
 }
