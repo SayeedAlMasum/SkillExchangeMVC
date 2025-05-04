@@ -67,8 +67,8 @@
                     <td>@item.SubCategory</td>
                     <td>@item.IsPremium</td>
                     <td>
-                        <a asp-page="/Admin/EditCourse" asp-route-id="@item.CourseId" class="btn btn-primary">Edit</a>
-                        <form method="post" asp-page-handler="Delete" asp-route-id="@item.CourseId" style="display:inline;">
+                        <a asp-controller="Course" asp-action="EditCourse" asp-route-id="@item.CourseId" class="btn btn-primary">Edit</a>
+                        <form method="post" asp-controller="Course" asp-action="Delete" asp-route-id="@item.CourseId" style="display:inline;">
                             <button type="submit" class="btn btn-danger">Delete</button>
                         </form>
                     </td>

@@ -1,0 +1,68 @@
+﻿@* Course/EditCourse.cshtml *@
+@model Course
+
+<h3>Edit Course</h3>
+<form asp-action="EditCourse" method="post">
+    <input type="hidden" asp-for="CourseId" />
+    <div class="form-group">
+        <label asp-for="Title"></label>
+        <input asp-for="Title" class="form-control" />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Description"></label>
+        <textarea asp-for="Description" class="form-control" rows="2"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Category"></label>
+        <select asp-for="Category" class="form-control" onchange="updateSubCategories()">
+            <option value="Technical">Technical</option>
+            <option value="Creative">Creative</option>
+            <option value="Business">Business</option>
+            <option value="Personal Development">Personal Development</option>
+            <option value="Other">Other</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label asp-for="SubCategory"></label>
+        <select asp-for="SubCategory" class="form-control" id="SubCategory">
+            <option>Select a subcategory</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label asp-for="IsPremium"></label>
+        <input asp-for="IsPremium" class="form-check-input" />
+    </div>
+    <button type="submit" class="btn btn-primary">Update</button>
+</form>
+
+@section Scripts {
+    <script>
+        const subCategories = {
+            "Technical": ["Programming", "Networking", "AI and Machine Learning", "Cybersecurity"],
+            "Creative": ["Graphic Design", "Photography", "Video Editing"],
+            "Business": ["Finance", "Marketing", "Entrepreneurship"],
+            "Personal Development": ["Leadership", "Time Management", "Public Speaking"],
+            "Other": ["Miscellaneous"]
+        };
+
+        function updateSubCategories() {
+            const category = document.getElementById("Category").value;
+            const subCategoryDropdown = document.getElementById("SubCategory");
+
+            subCategoryDropdown.innerHTML = '';
+
+            if (subCategories[category]) {
+                subCategories[category].forEach(sub => {
+                    const option = document.createElement("option");
+                    option.value = sub;
+                    option.textContent = sub;
+                    subCategoryDropdown.appendChild(option);
+                });
+            }
+        }
+
+        window.onload = updateSubCategories;
+    </script>
+}
