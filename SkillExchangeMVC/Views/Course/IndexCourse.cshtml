@@ -33,7 +33,7 @@
                             <td>
                         @if (item.IsPremium)
                         {
-                                        <a asp-page="/Payment" asp-route-courseId="@item.CourseId" class="btn btn-warning btn-sm">Enroll</a>
+                                        <a asp-Controller="Payment" asp-action="CreatePayment" asp-route-courseId="@item.CourseId" class="btn btn-warning btn-sm">Enroll</a>
                         }
                         else
                         {

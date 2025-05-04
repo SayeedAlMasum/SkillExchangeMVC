@@ -1,0 +1,22 @@
+﻿﻿@* CreatePayment.cshtml *@
+@model PaymentViewModel
+
+<h2>Payment for @Model.Course.Title</h2>
+<form method="post" asp-page-handler="Pay">
+    <div class="form-group">
+        <label for="CardNumber">Card Number</label>
+        <input type="text" id="CardNumber" asp-for="CardNumber" class="form-control" />
+        <span asp-validation-for="CardNumber" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label for="ExpiryDate">Expiry Date</label>
+        <input type="text" id="ExpiryDate" asp-for="ExpiryDate" class="form-control" />
+        <span asp-validation-for="ExpiryDate" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label for="CVV">CVV</label>
+        <input type="text" id="CVV" asp-for="CVV" class="form-control" />
+        <span asp-validation-for="CVV" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-success">Pay</button>
+</form>

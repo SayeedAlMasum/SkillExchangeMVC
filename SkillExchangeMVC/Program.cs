@@ -1,7 +1,7 @@
 //Startup.cs/Program.cs
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
-using SkillExchangeMVC.Models;
+using SkillExchangeMVC.Models.Context;
 
 var builder = WebApplication.CreateBuilder(args);
 

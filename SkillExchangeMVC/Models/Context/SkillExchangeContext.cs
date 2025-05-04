@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 
-namespace SkillExchangeMVC.Models
+namespace SkillExchangeMVC.Models.Context
 {
     public class SkillExchangeContext : DbContext
     {

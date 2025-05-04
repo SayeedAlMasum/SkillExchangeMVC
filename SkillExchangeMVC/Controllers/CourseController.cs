@@ -2,12 +2,12 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SkillExchangeMVC.Models;
+using SkillExchangeMVC.Models.Context;
 using SkillExchangeMVC.Models.ViewModels;
 using System.Linq;
 
 namespace SkillExchangeMVC.Controllers
-{
-    [Authorize(Roles = "Admin")]
+{ 
     public class CourseController : Controller
     {
         private readonly SkillExchangeContext _skillExchangeContext;
@@ -28,7 +28,7 @@ namespace SkillExchangeMVC.Controllers
             };
             return View(viewModel);
         }
-
+        [Authorize(Roles ="Admin")]
         public IActionResult CreateCourse()
         {
             var viewModel = new CourseViewModel
