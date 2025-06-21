@@ -1,0 +1,49 @@
+﻿@* IndexRegister.cshtml *@
+@model List<SkillExchangeMVC.Models.UserInfo>
+
+@{
+    ViewData["Title"] = "All Registered Users";
+}
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">All Registered Users</h2>
+
+    <table id="userTable" class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                int count = 1;
+                foreach (var user in Model)
+                {
+                    <tr>
+                        <td>@count</td>
+                        <td>@user.Name</td>
+                        <td>@user.Email</td>
+                        <td>@user.Role</td>
+                    </tr>
+                    count++;
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#userTable').DataTable({
+                responsive: true,
+                paging: true,
+                searching: true,
+                ordering: true
+            });
+        });
+    </script>
+}

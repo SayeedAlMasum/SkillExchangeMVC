@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿//LoginViewModel
+using System.ComponentModel.DataAnnotations;
 
 namespace SkillExchangeMVC.Models.ViewModels
 {

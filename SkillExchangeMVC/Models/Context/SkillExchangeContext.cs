@@ -1,4 +1,5 @@
-﻿using System;
+﻿//SkillExchangeContext
+using System;
 using Microsoft.EntityFrameworkCore;
 
 namespace SkillExchangeMVC.Models.Context

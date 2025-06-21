@@ -1,4 +1,5 @@
 ﻿//RegisterController
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using SkillExchangeMVC.Models;
@@ -60,6 +61,13 @@ namespace SkillExchangeMVC.Controllers
             // Redirect to login or home page
             return RedirectToAction("CreateLogin", "Login");
         }
+        [Authorize(Roles = "Admin")]
 
+        public IActionResult IndexRegister()
+        {
+            var users = _skillExchangeContext.UserInfo.ToList();
+            return View(users);
+
+        }
     }
 }
