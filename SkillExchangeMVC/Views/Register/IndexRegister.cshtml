@@ -37,13 +37,7 @@
 
 @section Scripts {
     <script>
-        $(document).ready(function () {
-            $('#userTable').DataTable({
-                responsive: true,
-                paging: true,
-                searching: true,
-                ordering: true
-            });
-        });
+        // DataTables v2.3.2 initialization syntax
+        const table = new DataTable('#userTable');
     </script>
 }

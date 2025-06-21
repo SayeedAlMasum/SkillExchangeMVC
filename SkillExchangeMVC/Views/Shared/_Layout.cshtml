@@ -1,10 +1,12 @@
 ﻿@* _Layout.cshtml *@
+@* _Layout.cshtml *@
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - SkillExchangeMVC</title>
+
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/SkillExchangeMVC.styles.css" asp-append-version="true" />
@@ -13,8 +15,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- DataTables CSS -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
+    <!-- DataTables 2.3.2 CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.min.css" />
 </head>
 
 <body class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "landing-page" : "other-page")">
@@ -33,11 +35,6 @@
                         <li class="nav-item">
                             <a class="nav-link text-white" asp-area="" asp-page="/Index">Home</a>
                         </li>
-                        @* 
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-area="" asp-page="About">About</a>
-                        </li>
-                        *@
 
                         @if (User.IsInRole("Admin"))
                         {
@@ -56,11 +53,11 @@
                                 <a class="nav-link text-white" asp-page="/UploadContent">Upload Content</a>
                             </li>
                         }
+
                         @if (User.IsInRole("Admin"))
                         {
                             <a class="btn btn-info" asp-controller="Register" asp-action="IndexRegister">All_Users</a>
                         }
-
                     </ul>
 
                     <ul class="navbar-nav">
@@ -101,19 +98,16 @@
             &copy; 2025 SkillExchange | <a href="/Privacy" class="text-white">Privacy Policy</a>
         </div>
     </footer>
-    <!-- jQuery (must come before DataTables) -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <!-- Bootstrap -->
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- DataTables -->
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <!-- DataTables 2.3.2 JS -->
+    <script src="https://cdn.datatables.net/2.3.2/js/dataTables.min.js"></script>
 
-    <!-- Site scripts -->
     <script src="~/js/site.js" asp-append-version="true"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
-
 </body>
 </html>
