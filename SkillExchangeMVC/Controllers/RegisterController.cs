@@ -56,6 +56,7 @@ namespace SkillExchangeMVC.Controllers
             // Save to database
             _skillExchangeContext.UserInfo.Add(user);
             _skillExchangeContext.SaveChanges();
+            TempData["SuccessMessage"] = "Registration successful! Please log in.";
 
 
             // Redirect to login or home page
