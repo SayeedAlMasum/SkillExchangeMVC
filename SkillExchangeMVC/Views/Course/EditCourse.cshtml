@@ -4,36 +4,45 @@
 <h3>Edit Course</h3>
 <form asp-action="EditCourse" method="post">
     <input type="hidden" asp-for="CourseId" />
+    <input type="hidden" asp-for="TeacherId" />
+
     <div class="form-group">
         <label asp-for="Title"></label>
         <input asp-for="Title" class="form-control" />
         <span asp-validation-for="Title" class="text-danger"></span>
     </div>
+
     <div class="form-group">
         <label asp-for="Description"></label>
         <textarea asp-for="Description" class="form-control" rows="2"></textarea>
         <span asp-validation-for="Description" class="text-danger"></span>
     </div>
+
     <div class="form-group">
         <label asp-for="Category"></label>
-        <select asp-for="Category" class="form-control" onchange="updateSubCategories()">
+        <select asp-for="Category" class="form-control" id="Category" onchange="updateSubCategories()">
             <option value="Technical">Technical</option>
             <option value="Creative">Creative</option>
             <option value="Business">Business</option>
             <option value="Personal Development">Personal Development</option>
             <option value="Other">Other</option>
         </select>
+        <span asp-validation-for="Category" class="text-danger"></span>
     </div>
+
     <div class="form-group">
         <label asp-for="SubCategory"></label>
         <select asp-for="SubCategory" class="form-control" id="SubCategory">
-            <option>Select a subcategory</option>
+            <option value="">Select a subcategory</option>
         </select>
+        <span asp-validation-for="SubCategory" class="text-danger"></span>
     </div>
-    <div class="form-group">
-        <label asp-for="IsPremium"></label>
+
+    <div class="form-group form-check">
         <input asp-for="IsPremium" class="form-check-input" />
+        <label class="form-check-label" asp-for="IsPremium">Is Premium?</label>
     </div>
+
     <button type="submit" class="btn btn-primary">Update</button>
 </form>
 
@@ -50,7 +59,9 @@
         function updateSubCategories() {
             const category = document.getElementById("Category").value;
             const subCategoryDropdown = document.getElementById("SubCategory");
+            const selectedSubCategory = "@Model.SubCategory";
 
+            // Clear and reset subcategory options
             subCategoryDropdown.innerHTML = '';
 
             if (subCategories[category]) {
@@ -58,11 +69,15 @@
                     const option = document.createElement("option");
                     option.value = sub;
                     option.textContent = sub;
+                    if (sub === selectedSubCategory) {
+                        option.selected = true;
+                    }
                     subCategoryDropdown.appendChild(option);
                 });
             }
         }
 
+        // Trigger on page load
         window.onload = updateSubCategories;
     </script>
 }

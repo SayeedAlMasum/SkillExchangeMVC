@@ -35,7 +35,7 @@
                 <div class="collapse navbar-collapse" id="navbarCollapse">
                     <ul class="navbar-nav me-auto">
                         <li class="nav-item">
-                            <a class="nav-link text-white" asp-area="" asp-page="/Index">Home</a>
+                            <a class="nav-link text-white" asp-controller="Home" asp-action="Index" Index">Home</a>
                         </li>
 
                         @if (User.IsInRole("Admin"))
@@ -52,7 +52,10 @@
                         @if (User.IsInRole("Teacher"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-white" asp-controller="Course" asp-action="/UploadContent">Upload Content</a>
+                                <a class="nav-link text-white" asp-controller="Course" asp-action="TeacherCourses">My Courses</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-controller="Content" asp-action="UploadContent">Upload Content</a>
                             </li>
                         }
                         @if (User.IsInRole("Admin"))
@@ -63,6 +66,8 @@
                         }
                         @if (User.IsInRole("Admin"))
                         {
+                            @* <li><a href="/Course/CreateCourse">Manage Courses</a></li> *@
+                            
                             <a class="btn btn-info" asp-controller="Register" asp-action="IndexRegister">All_Users</a>
                         }
                     </ul>

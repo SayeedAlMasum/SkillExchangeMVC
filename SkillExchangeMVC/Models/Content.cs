@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿//Content.cs
+using System.ComponentModel.DataAnnotations;
 
 namespace SkillExchangeMVC.Models
 {

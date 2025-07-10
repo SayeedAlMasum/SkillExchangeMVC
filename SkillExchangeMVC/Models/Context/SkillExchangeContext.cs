@@ -14,5 +14,6 @@ namespace SkillExchangeMVC.Models.Context
         public DbSet<Course> Course { get; set; }
         public DbSet<UserInfo> UserInfo { get; set; }
         public DbSet<Role> Role { get; set; }   
+        public DbSet<Content> Content { get; set; }
     }
 }

@@ -1,22 +1,21 @@
 ﻿@* Course/CreateCourse.cshtml *@
 @model CourseViewModel
 
-<!-- Form to Add a New Course -->
 <h3>Add New Course</h3>
 <form method="post">
     <div class="form-group">
-        <label for="Title">Title</label>
-        <input type="text" id="Title" asp-for="Course.Title" class="form-control" required />
+        <label asp-for="Course.Title"></label>
+        <input asp-for="Course.Title" class="form-control" required />
         <span asp-validation-for="Course.Title" class="text-danger"></span>
     </div>
     <div class="form-group">
-        <label for="Description">Description</label>
-        <textarea id="Description" asp-for="Course.Description" class="form-control" rows="1" required></textarea>
+        <label asp-for="Course.Description"></label>
+        <textarea asp-for="Course.Description" class="form-control" rows="1" required></textarea>
         <span asp-validation-for="Course.Description" class="text-danger"></span>
     </div>
     <div class="form-group">
-        <label for="Category">Category</label>
-        <select id="Category" asp-for="Course.Category" class="form-control" onchange="updateSubCategories()" required>
+        <label asp-for="Course.Category"></label>
+        <select asp-for="Course.Category" class="form-control" onchange="updateSubCategories()" required>
             <option value="" disabled selected>Select a category</option>
             <option value="Technical">Technical</option>
             <option value="Creative">Creative</option>
@@ -34,15 +33,20 @@
         <span asp-validation-for="Course.SubCategory" class="text-danger"></span>
     </div>
     <div class="form-group">
-        <label for="IsPremium">Is Premium Course?</label>
-        <input type="checkbox" id="IsPremium" asp-for="Course.IsPremium" class="form-check-input" />
-        <span asp-validation-for="Course.IsPremium" class="text-danger"></span>
+        <label asp-for="Course.IsPremium"></label>
+        <input type="checkbox" asp-for="Course.IsPremium" class="form-check-input" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Course.TeacherId">Assign to Teacher</label>
+        <select asp-for="Course.TeacherId" asp-items="Model.Teachers" class="form-control" required>
+            <option value="">Select a teacher</option>
+        </select>
+        <span asp-validation-for="Course.TeacherId" class="text-danger"></span>
     </div>
     <button type="submit" class="btn btn-success">Save</button>
 </form>
 
 <hr />
-
 <!-- List of Available Courses -->
 <h2>Available Courses</h2>
 <table class="table table-bordered table-striped">
@@ -94,14 +98,13 @@
         "Other": ["Miscellaneous"]
     };
 
-    function updateSubCategories() {
-        const category = document.getElementById("Category").value;
+       function updateSubCategories() {
+        const category = document.getElementById("Course_Category").value; // ✅ correct ID
         const subCategoryDropdown = document.getElementById("SubCategory");
 
         // Clear existing options
         subCategoryDropdown.innerHTML = '<option value="" disabled selected>Select a subcategory</option>';
 
-        // Populate new subcategories
         if (subCategories[category]) {
             subCategories[category].forEach(subCategory => {
                 const option = document.createElement("option");
@@ -111,4 +114,5 @@
             });
         }
     }
+
 </script>

@@ -1,0 +1,33 @@
+﻿@* TeacherCourses.cshtml *@
+@model List<SkillExchangeMVC.Models.Course>
+
+<h2>Your Assigned Courses</h2>
+
+@if (!Model.Any())
+{
+    <p>You are not assigned to any courses.</p>
+}
+else
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Category</th>
+                <th>SubCategory</th>
+                <th>Premium</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var course in Model)
+            {
+                <tr>
+                    <td>@course.Title</td>
+                    <td>@course.Category</td>
+                    <td>@course.SubCategory</td>
+                    <td>@(course.IsPremium ? "Yes" : "No")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
