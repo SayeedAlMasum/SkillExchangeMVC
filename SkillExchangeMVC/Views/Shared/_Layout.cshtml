@@ -52,7 +52,7 @@
                         @if (User.IsInRole("Teacher"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-white" asp-page="/UploadContent">Upload Content</a>
+                                <a class="nav-link text-white" asp-controller="Course" asp-action="/UploadContent">Upload Content</a>
                             </li>
                         }
                         @if (User.IsInRole("Admin"))

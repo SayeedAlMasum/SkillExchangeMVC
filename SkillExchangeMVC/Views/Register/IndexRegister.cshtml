@@ -15,6 +15,7 @@
                 <th>Name</th>
                 <th>Email</th>
                 <th>Role</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -27,6 +28,9 @@
                         <td>@user.Name</td>
                         <td>@user.Email</td>
                         <td>@user.Role</td>
+                        <td>
+                        <button class= "btn btn-danger btn-sm delete-user" data-userid="@user.UserInfoId" data-username="@user.Name">Delete</button>
+                        </td>
                     </tr>
                     count++;
                 }
@@ -34,10 +38,52 @@
         </tbody>
     </table>
 </div>
-
 @section Scripts {
+ 
     <script>
-        // DataTables v2.3.2 initialization syntax
+        document.querySelectorAll('.delete-user').forEach(button => {
+            button.addEventListener('click', function () {
+                const userId = this.getAttribute('data-userid');
+                const username = this.getAttribute('data-username');
+
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: `Do you want to delete user "${username}"?`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                               const formData = new FormData();
+        formData.append("id", userId);
+
+        fetch('/Register/DeleteUser', {
+            method: 'POST',
+            body: formData
+        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                       Swal.fire('Deleted!', data.message, 'success').then(() => {
+            const row = button.closest('tr');
+            row.remove();
+        });
+                            } else {
+                                Swal.fire('Error!', 'Something went wrong.', 'error');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            Swal.fire('Error!', 'Could not delete the user.', 'error');
+                        });
+                    }
+                });
+            });
+        });
+
+        // Initialize DataTables (if you're using it)
         const table = new DataTable('#userTable');
     </script>
 }

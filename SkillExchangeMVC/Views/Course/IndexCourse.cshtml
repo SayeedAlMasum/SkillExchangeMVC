@@ -4,13 +4,13 @@
 <h2>Available Courses</h2>
 
 <!-- Search Box for User -->
-<div class="form-group">
+<!--<div class="form-group">
     <label for="search">Search Courses</label>
     <input type="text" id="search" class="form-control" placeholder="Search for a course..." onkeyup="filterCourses()" />
-</div>
+</div>-->
 
 <!-- List of Available Courses -->
-<table class="table table-bordered table-striped">
+<table id="coursesTable" class="table table-bordered table-striped">
     <thead>
         <tr>
             <th>Title</th>
@@ -51,23 +51,18 @@
         }
     </tbody>
 </table>
-
-<script>
-    function filterCourses() {
-        const searchInput = document.getElementById("search").value.toLowerCase();
-        const rows = document.querySelectorAll("#courseTable tr");
-
-        rows.forEach(row => {
-            const title = row.querySelector("td:first-child").textContent.toLowerCase();
-            const category = row.querySelector("td:nth-child(2)").textContent.toLowerCase();
-            const subCategory = row.querySelector("td:nth-child(3)").textContent.toLowerCase();
-
-            if (title.includes(searchInput) || category.includes(searchInput) || subCategory.includes(searchInput)) {
-                row.style.display = "";
-            } else {
-                row.style.display = "none";
-            }
+@section Scripts {
+    <script>
+        // Initialize DataTables
+        const table = new DataTable('#coursesTable', {
+            searchable: true,
+            paging: true,
+            fixedHeight: false
         });
-    }
 
-</script>
+        // Optional: Custom search input (bind manually)
+        // document.getElementById("search").addEventListener("keyup", function () {
+        //     table.search(this.value).draw();
+        // });
+    </script>
+}

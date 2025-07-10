@@ -70,5 +70,21 @@ namespace SkillExchangeMVC.Controllers
             return View(users);
 
         }
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        [HttpPost]
+        public IActionResult DeleteUser(string id)
+        {
+            var user = _skillExchangeContext.UserInfo.Find(id);
+            if (user == null)
+            {
+                return Json(new { success = false, message = "User not found." });
+            }
+
+            _skillExchangeContext.UserInfo.Remove(user);
+            _skillExchangeContext.SaveChanges();
+            return Json(new { success = true, message = "User deleted successfully!" });
+        }
+
     }
 }
