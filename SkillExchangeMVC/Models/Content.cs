@@ -1,9 +1,10 @@
 ﻿//Content.cs
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SkillExchangeMVC.Models
 {
-    public class Content
+    public class Content : BaseModel
     {
         [Key]
         public int ContentId { get; set; }

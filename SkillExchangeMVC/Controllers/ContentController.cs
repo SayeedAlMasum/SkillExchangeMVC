@@ -36,15 +36,22 @@ namespace SkillExchangeMVC.Controllers
             ViewBag.Courses = new SelectList(courses, "CourseId", "Title");
             return View();
         }
-
         [HttpPost]
         [Authorize(Roles = "Teacher")]
         public IActionResult UploadContent(Content content)
         {
             if (ModelState.IsValid)
             {
+                var userName = User.FindFirstValue(ClaimTypes.Name) ?? "Unknown";
+
+                content.CreatedBy = userName;
+                content.UpdatedBy = userName;
+                content.CreatedDate = DateTime.Now;
+                content.UpdatedDate = DateTime.Now;
+
                 _skillExchangeContext.Content.Add(content);
                 _skillExchangeContext.SaveChanges();
+
                 TempData["Success"] = "Content uploaded successfully.";
                 return RedirectToAction("UploadContent");
             }
@@ -60,5 +67,6 @@ namespace SkillExchangeMVC.Controllers
             ViewBag.Courses = new SelectList(courses, "CourseId", "Title");
             return View(content);
         }
+
     }
 }
