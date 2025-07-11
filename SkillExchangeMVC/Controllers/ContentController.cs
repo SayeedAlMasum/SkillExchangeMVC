@@ -17,9 +17,12 @@ namespace SkillExchangeMVC.Controllers
             _skillExchangeContext = skillExchangeContext;
         }
 
-        public IActionResult Index()
+        public IActionResult IndexContent()
         {
-            return View();
+            var email = User.FindFirstValue(ClaimTypes.Email);
+
+            var contents = _skillExchangeContext.Content.Where(c => c.UploaderEmail == email).OrderByDescending(c => c.CreatedDate).ToList(); 
+            return View(contents);
         }
 
         [Authorize(Roles = "Teacher")]
@@ -43,7 +46,9 @@ namespace SkillExchangeMVC.Controllers
             if (ModelState.IsValid)
             {
                 var userName = User.FindFirstValue(ClaimTypes.Name) ?? "Unknown";
+                var userEmail = User.FindFirstValue(ClaimTypes.Email) ?? "unknown@domain.com";
 
+                content.UploaderEmail = userEmail;
                 content.CreatedBy = userName;
                 content.UpdatedBy = userName;
                 content.CreatedDate = DateTime.Now;
@@ -67,6 +72,60 @@ namespace SkillExchangeMVC.Controllers
             ViewBag.Courses = new SelectList(courses, "CourseId", "Title");
             return View(content);
         }
+        [Authorize(Roles = "Teacher")]
+        public IActionResult EditContent(int id)
+        {
+            var content = _skillExchangeContext.Content.FirstOrDefault(c => c.ContentId == id);
+            if (content == null) return NotFound();
+
+            var email = User.FindFirstValue(ClaimTypes.Email);
+            var userId = _skillExchangeContext.UserInfo.FirstOrDefault(u => u.Email == email)?.UserInfoId;
+
+            ViewBag.Courses = new SelectList(
+                _skillExchangeContext.Course.Where(c => c.TeacherId == userId),
+                "CourseId", "Title");
+
+            return View(content);
+        }
+        [HttpPost]
+        [Authorize(Roles = "Teacher")]
+        public IActionResult EditContent(Content updated)
+        {
+            if (!ModelState.IsValid) return View(updated);
+
+            var existing = _skillExchangeContext.Content.FirstOrDefault(c => c.ContentId == updated.ContentId);
+            if (existing == null) return NotFound();
+
+            var name = User.FindFirstValue(ClaimTypes.Name) ?? "Unknown";
+
+            existing.Title = updated.Title;
+            existing.Description = updated.Description;
+            existing.Type = updated.Type;
+            existing.URL = updated.URL;
+            existing.CourseId = updated.CourseId;
+            existing.UpdatedBy = name;
+            existing.UpdatedDate = DateTime.Now;
+
+            _skillExchangeContext.SaveChanges();
+            TempData["Success"] = "Content updated successfully.";
+
+            return RedirectToAction("IndexContent");
+        }
+        [HttpPost]
+        [Authorize(Roles = "Teacher")]
+        public IActionResult DeleteContent(int id)
+        {
+            var content = _skillExchangeContext.Content.FirstOrDefault(c => c.ContentId == id);
+            if (content == null)
+                return Json(new { success = false, message = "Content not found" });
+
+            _skillExchangeContext.Content.Remove(content);
+            _skillExchangeContext.SaveChanges();
+
+            return Json(new { success = true, message = "Content deleted successfully" });
+        }
+
+
 
     }
 }

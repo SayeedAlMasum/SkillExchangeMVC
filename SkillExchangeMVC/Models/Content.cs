@@ -23,5 +23,6 @@ namespace SkillExchangeMVC.Models
 
         [Required]
         public int CourseId { get; set; }
+        public string UploaderEmail { get; set; } = string.Empty;
     }
 }
