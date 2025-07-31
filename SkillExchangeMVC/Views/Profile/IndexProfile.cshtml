@@ -4,15 +4,28 @@
     ViewData["Title"] = "Profile";
 }
 
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        @if (TempData["SweetAlert"] != null)
+        {
+            var msg = TempData["SweetAlert"].ToString().Split('|');
+            <text>
+                    Swal.fire({ icon: msg[0], text: msg[1] });
+            </text>
+        }
+    </script>
+}
+
 <div class="container mt-5">
     <div class="card shadow-lg">
         <div class="card-header bg-primary text-white">
             <h4>Welcome, @Model.Name!</h4>
         </div>
         <div class="card-body">
-            @if (Model.ProfileImagePath != null)
+            @if (!string.IsNullOrEmpty(Model.ProfileImagePath))
             {
-                <img src="@Model.ProfileImagePath" width="150" height="150" class="rounded-circle" />
+                <img src="@Model.ProfileImagePath" width="150" height="150" class="rounded-circle border border-dark" />
             }
             else
             {
@@ -22,7 +35,7 @@
             <p><strong>Email:</strong> @Model.Email</p>
             <p><strong>Location:</strong> @Model.Location</p>
             <p><strong>Role:</strong> @Model.Role</p>
-            <a asp-action="EditProfile" class="btn btn-warning">Edit Profile</a> <br /> <br />
+            <a asp-action="EditProfile" class="btn btn-warning">Edit Profile</a> <br /><br />
             <form asp-controller="Logout" asp-action="IndexLogout" method="post">
                 <button type="submit" class="btn btn-danger">Logout</button>
             </form>

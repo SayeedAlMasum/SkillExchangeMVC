@@ -22,12 +22,21 @@ namespace SkillExchangeMVC.Controllers
 
         public IActionResult IndexProfile()
         {
-            var email = User.FindFirstValue(ClaimTypes.Email);
-            var user = _skillExchangeContext.UserInfo.FirstOrDefault(u => u.Email == email);
-            if (user == null) return RedirectToAction("CreateLogin", "Login");
+            var username = User.Identity.Name;
+            var user = _skillExchangeContext.UserInfo.FirstOrDefault(u => u.Name == username);
+
+            if (user != null && !string.IsNullOrEmpty(user.ProfileImagePath))
+            {
+                HttpContext.Session.SetString("ProfileImage", "/images/" + user.ProfileImagePath);
+            }
+            else
+            {
+                HttpContext.Session.SetString("ProfileImage", "/images/default-user.png");
+            }
 
             return View(user);
         }
+
 
         [HttpGet]
         public IActionResult EditProfile()
@@ -61,11 +70,13 @@ namespace SkillExchangeMVC.Controllers
                     ProfileImage.CopyTo(stream);
                 }
 
-                existingUser.ProfileImagePath = "/images/profile/" + fileName;
+                existingUser.ProfileImagePath = $"/images/profile/{fileName}";
+                HttpContext.Session.SetString("ProfileImage", existingUser.ProfileImagePath); 
             }
 
             _skillExchangeContext.SaveChanges();
-            TempData["SuccessMessage"] = "Profile updated successfully!";
+
+            TempData["SweetAlert"] = "success|Profile updated successfully!";
             return RedirectToAction("IndexProfile");
         }
     }
