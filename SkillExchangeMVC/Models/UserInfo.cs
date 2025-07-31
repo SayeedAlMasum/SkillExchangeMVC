@@ -31,5 +31,6 @@ namespace SkillExchangeMVC.Models
         public int RoleId { get; set; }
         public string? PasswordResetToken { get; set; }
         public DateTime? ResetTokenExpires { get; set; }
+      
     }
 }
