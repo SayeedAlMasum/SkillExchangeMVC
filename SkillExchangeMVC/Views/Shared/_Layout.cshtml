@@ -69,10 +69,7 @@
                                 <a class="nav-link text-white" asp-controller="Home" asp-action="Privacy">Dashboard</a>
                             </li>
                         }
-                        @if (User.IsInRole("Admin"))
-                        {
-                            <a class="btn btn-info" asp-controller="Register" asp-action="IndexRegister">All_Users</a>
-                        }
+
                     </ul>
 
                     <ul class="navbar-nav">
@@ -89,10 +86,9 @@
                                     imagePath = currentUser.ProfileImagePath;
                                 }
                             }
-
-                            <li class="nav-item d-flex align-items-center">
+                            <li>
                                 <a asp-controller="Profile" asp-action="IndexProfile" class="nav-link p-0" style="display:flex; align-items:center;">
-                                    <img src="@imagePath" alt="Profile" class="rounded-circle" style="height: 35px; width: 35px; object-fit: cover;" />
+                                    <img src="@imagePath" alt="Profile" class="rounded-circle" style="height: 2.5rem; width: 2.5rem; object-fit: cover;" />
                                 </a>
                             </li>
                         }
