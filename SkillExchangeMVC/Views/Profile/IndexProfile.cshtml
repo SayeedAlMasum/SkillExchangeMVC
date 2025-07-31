@@ -1,31 +1,31 @@
 ﻿@* IndexProfile.cshtml *@
 @model SkillExchangeMVC.Models.UserInfo
-
 @{
-    ViewData["Title"] = "My Profile";
+    ViewData["Title"] = "Profile";
 }
 
-<div class="card shadow border-0 p-4 mt-3">
-    <h2 class="mb-4 text-primary">👤 My Profile</h2>
+<div class="container mt-5">
+    <div class="card shadow-lg">
+        <div class="card-header bg-primary text-white">
+            <h4>Welcome, @Model.Name!</h4>
+        </div>
+        <div class="card-body">
+            @if (Model.ProfileImagePath != null)
+            {
+                <img src="@Model.ProfileImagePath" width="150" height="150" class="rounded-circle" />
+            }
+            else
+            {
+                <p>No profile image uploaded.</p>
+            }
 
-    <dl class="row">
-        <dt class="col-sm-3">Name</dt>
-        <dd class="col-sm-9">@Model.Name</dd>
-
-        <dt class="col-sm-3">Email</dt>
-        <dd class="col-sm-9">@Model.Email</dd>
-
-        <dt class="col-sm-3">Role</dt>
-        <dd class="col-sm-9">@Model.Role</dd>
-
-        <dt class="col-sm-3">Location</dt>
-        <dd class="col-sm-9">@Model.Location</dd>
-
-        <dt class="col-sm-3">Account Active</dt>
-        <dd class="col-sm-9">@(Model.IsActive ? "Yes" : "No")</dd>
-    </dl>
-
-    <form method="post" asp-controller="Logout" asp-action="IndexLogout">
-        <button type="submit" class="btn btn-danger mt-3">Logout</button>
-    </form>
+            <p><strong>Email:</strong> @Model.Email</p>
+            <p><strong>Location:</strong> @Model.Location</p>
+            <p><strong>Role:</strong> @Model.Role</p>
+            <a asp-action="EditProfile" class="btn btn-warning">Edit Profile</a> <br /> <br />
+            <form asp-controller="Logout" asp-action="IndexLogout" method="post">
+                <button type="submit" class="btn btn-danger">Logout</button>
+            </form>
+        </div>
+    </div>
 </div>
