@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\images\profile\" />
+    <Folder Include="wwwroot\requirements\" />
   </ItemGroup>
 
 </Project>
