@@ -13,81 +13,56 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/SkillExchangeMVC.styles.css" asp-append-version="true" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- DataTables 2.3.2 CSS -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.min.css" />
-    <!-- SweetAlert2 CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
 
 <body class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "landing-page" : "other-page")">
+
+    <!-- Navbar -->
     <header>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+        <nav class="navbar navbar-expand-lg navbar-light fixed-top shadow-sm bg-white">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-page="/Index">
+                <a class="navbar-brand" style="color:#093672" asp-area="" asp-page="/Index">
                     <i class="fa fa-lightbulb"></i> SkillExchange
                 </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
-                        aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarCollapse">
-                    <ul class="navbar-nav me-auto">
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Index">Home</a></li>
 
                         @if (User.IsInRole("Admin"))
                         {
-                            <li class="nav-item">
-                                <a class="nav-link text-white" asp-controller="Course" asp-action="CreateCourse">Create Course</a>
-                            </li>
+                            <li class="nav-item"><a class="nav-link" asp-controller="Course" asp-action="CreateCourse">Create Course</a></li>
                         }
 
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-controller="Course" asp-action="IndexCourse">View Courses</a>
-                        </li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Course" asp-action="IndexCourse">View Courses</a></li>
+
                         @if (User.IsInRole("Admin") || User.IsInRole("Teacher"))
                         {
-                            <li class="nav-item">
-                                <a class="nav-link text-white" asp-controller="Content" asp-action="IndexContent">View Contents</a>
-                            </li>
+                            <li class="nav-item"><a class="nav-link" asp-controller="Content" asp-action="IndexContent">View Contents</a></li>
                         }
                         @if (User.IsInRole("Teacher"))
                         {
-                            <li class="nav-item">
-                                <a class="nav-link text-white" asp-controller="Content" asp-action="UploadContent">Upload Content</a>
-                            </li>
+                            <li class="nav-item"><a class="nav-link" asp-controller="Content" asp-action="UploadContent">Upload Content</a></li>
                         }
                         @if (User.IsInRole("Admin"))
                         {
-                            <li class="nav-item">
-                                <a class="nav-link text-white" asp-controller="Home" asp-action="Privacy">Dashboard</a>
-                            </li>
+                            <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Privacy">Dashboard</a></li>
                         }
                         @if (User.IsInRole("Admin") || User.IsInRole("Teacher"))
                         {
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Requirement" asp-action="Upload"><i class="fa fa-upload"></i>Upload_Requirement</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Requirement" asp-action="Index">View_Requirements</a>
-                            </li>
+                            <li class="nav-item"><a class="nav-link" asp-controller="Requirement" asp-action="Upload"><i class="fa fa-upload"></i> Upload Requirement</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-controller="Requirement" asp-action="Index">View Requirements</a></li>
                         }
-
-
                     </ul>
 
                     <ul class="navbar-nav">
                         @if (User.Identity.IsAuthenticated)
                         {
                             string imagePath = "/images/default-user.png";
-
                             var email = User.FindFirstValue(ClaimTypes.Email);
                             if (!string.IsNullOrEmpty(email))
                             {
@@ -98,50 +73,47 @@
                                 }
                             }
                             <li>
-                                <a asp-controller="Profile" asp-action="IndexProfile" class="nav-link p-0" style="display:flex; align-items:center;">
+                                <a asp-controller="Profile" asp-action="IndexProfile" class="nav-link p-0 d-flex align-items-center">
                                     <img src="@imagePath" alt="Profile" class="rounded-circle" style="height: 2.5rem; width: 2.5rem; object-fit: cover;" />
                                 </a>
                             </li>
                         }
                         else
                         {
+                            <li class="nav-item"><a class="nav-link" asp-controller="Login" asp-action="CreateLogin">Sign In</a></li>
                             <li class="nav-item">
-                                <a class="nav-link text-white" asp-controller="Login" asp-action="CreateLogin">Sign In</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-white" asp-controller="Register" asp-action="CreateRegister">Sign Up</a>
+                                <a class="btn btn-primary rounded-pill ms-2 px-3" asp-controller="Register" asp-action="CreateRegister">Sign Up</a>
                             </li>
                         }
                     </ul>
-
                 </div>
             </div>
         </nav>
     </header>
 
-    <div class="container mt-4 mb-5">
-        <main role="main" class="pb-3">
+    <!-- Page Content -->
+    <main role="main">
+        <div class="container py-4">
             @RenderBody()
-        </main>
-    </div>
-
-    <footer class="footer">
-        <div class="container text-center">
-            &copy; 2025 SkillExchange | <a href="/Privacy" class="text-white">Privacy Policy</a>
+        </div>
+    </main>
+    <!-- Footer -->
+    <footer class="text-center py-3">
+        <div class="container">
+            <p class="mb-2 ">
+                &copy; 2025 SkillExchange |
+                <a href="/Privacy" class="">Privacy Policy</a>
+            </p>
+            <div class="social-icons">
+                <a href="#"><i class="fab fa-facebook fa-lg me-2"></i></a>
+                <a href="#"><i class="fab fa-linkedin fa-lg me-2"></i></a>
+                <a href="www.youtube.com"><i class="fab fa-youtube fa-lg "></i></a>
+            </div>
         </div>
     </footer>
-
-    <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- DataTables 2.3.2 JS -->
-    <script src="https://cdn.datatables.net/2.3.2/js/dataTables.min.js"></script>
-    <!-- SweetAlert2 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
     <script src="~/js/site.js" asp-append-version="true"></script>
-
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

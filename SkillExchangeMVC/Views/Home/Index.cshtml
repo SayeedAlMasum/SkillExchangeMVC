@@ -1,13 +1,14 @@
 ﻿@* Home/Index.cshtml *@
 <!-- Hero Section -->
-<div class="foreground"></div>
-<div class="jumbotron jumbotron-fluid bg-gradient text-white text-center">
-    <div class="container">
-        <h1 class="display-4 font-weight-bold animated fadeIn text-primary">Unlock Your Potential with SkillExchange</h1>
-        <p class="lead animated fadeIn delay-1s text-light">Explore top courses, share your expertise, and join a community of learners.</p>
-        <a asp-controller="Course" asp-action="IndexCourse" class="btn btn-lg btn-light btn-rounded shadow-lg mt-3 animated fadeIn delay-2s">Start Learning Now</a>
+<section class="hero-section-fullwidth text-center d-flex align-items-center justify-content-center">
+    <div class="overlay"></div>
+    <div class="content text-white">
+        <h1 class="fw-bold">JOIN US</h1>
+        <p class="lead">Build Your Epic Career with SkillExchange</p>
+        <a href="/Course/IndexCourse" class="btn btn-gradient mt-3">View Opportunities</a>
     </div>
-</div>
+</section>
+
 
 
 <!-- Testimonials Section -->
@@ -42,10 +43,4 @@
     <h3 class="text-primary mb-4">Get Started with SkillExchange</h3>
     <p class="text-dark">Ready to start your learning journey? Sign up today and access exclusive courses!</p>
     <a asp-controller="Register" asp-action="CreateRegister" class="btn btn-success btn-lg btn-rounded pulse">Sign Up Now</a>
-</div>
-
-
-<!-- Footer Section -->
-<div class="footer bg-dark text-white text-center py-4 mt-5">
-    <p>&copy; 2025 SkillExchange | <a href="/Privacy" class="text-white">Privacy Policy</a> | <a href="/Terms" class="text-white">Terms of Service</a></p>
 </div>
