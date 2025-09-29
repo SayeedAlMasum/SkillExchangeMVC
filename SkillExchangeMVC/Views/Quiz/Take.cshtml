@@ -1,0 +1,62 @@
+@model SkillExchangeMVC.Models.Quiz
+@{
+    ViewData["Title"] = "Take Quiz";
+    var questions = ViewBag.Questions as List<SkillExchangeMVC.Models.QuizQuestion>;
+    var options = ViewBag.Options as IDictionary<int, List<SkillExchangeMVC.Models.QuizOption>>;
+}
+<h2>@Model.Title</h2>
+@if (questions == null || questions.Count == 0)
+{
+    <div class="alert alert-info">No questions have been added yet. For demo, you can still submit a manual score below.</div>
+}
+
+<form asp-action="Submit" method="post">
+    <input type="hidden" name="id" value="@Model.QuizId" />
+
+    @if (questions != null && questions.Count > 0)
+    {
+        <div class="card mb-3">
+            <div class="card-header">MCQ Section</div>
+            <div class="card-body">
+                @for (int i = 0; i < questions.Count; i++)
+                {
+                    var q = questions[i];
+                    <div class="mb-3">
+                        <strong>Q@(i+1).</strong> @q.Text (@q.Marks mark(s))
+                        <div class="ms-3 mt-2">
+                            @if (options != null && options.ContainsKey(q.QuizQuestionId))
+                            {
+                                foreach (var op in options[q.QuizQuestionId])
+                                {
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="qn_@q.QuizQuestionId" value="@op.QuizOptionId" id="opt_@op.QuizOptionId" />
+                                        <label class="form-check-label" for="opt_@op.QuizOptionId">@op.Text</label>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <em>No options.</em>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    @if (questions == null || questions.Count == 0)
+    {
+        <div class="mb-3">
+            <label>Manual score (0-@Model.TotalMarks)</label>
+            <input type="number" name="score" min="0" max="@Model.TotalMarks" value="0" class="form-control" />
+        </div>
+    }
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}

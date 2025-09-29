@@ -1,0 +1,45 @@
+﻿@* EditControl.cshtml *@
+@model SkillExchangeMVC.Models.Content
+@{
+    ViewData["Title"] = "Edit Content";
+}
+
+<h2>Edit Content</h2>
+
+<form asp-action="EditContent" method="post">
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.ContentId)
+
+    <div class="form-group">
+        <label asp-for="Title"></label>
+        <input asp-for="Title" class="form-control" />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Description"></label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Type"></label>
+        <input asp-for="Type" class="form-control" />
+        <span asp-validation-for="Type" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="URL"></label>
+        <input asp-for="URL" class="form-control" />
+        <span asp-validation-for="URL" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="CourseId"></label>
+        <select asp-for="CourseId" asp-items="ViewBag.Courses" class="form-control"></select>
+        <span asp-validation-for="CourseId" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-success">Save</button>
+    <a asp-action="IndexContent" class="btn btn-secondary">Back</a>
+</form>

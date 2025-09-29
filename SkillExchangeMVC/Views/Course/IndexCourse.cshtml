@@ -1,0 +1,73 @@
+﻿@* Course/Index.cshtml *@
+@model CourseViewModel
+
+<h2>Available Courses</h2>
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<!-- List of Available Courses -->
+<table id="coursesTable" class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Category</th>
+            <th>Subcategory</th>
+            <th>Is Premium</th>
+            <th>Operation</th>
+        </tr>
+    </thead>
+    <tbody id="courseTable">
+        @if (Model.Courses?.Any() ?? false)
+        {
+            @foreach (var item in Model.Courses)
+            {
+                <tr>
+                    <td>@item.Title</td>
+                    <td>@item.Category</td>
+                    <td>@item.SubCategory</td>
+                    <td>@item.IsPremium</td>
+                    <td>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <a asp-controller="Course" asp-action="AdminEnrollOptions" asp-route-id="@item.CourseId" class="btn btn-secondary btn-sm">Enroll</a>
+                            <a asp-controller="Quiz" asp-action="ListByCourse" asp-route-courseId="@item.CourseId" class="btn btn-outline-primary btn-sm">Quizzes</a>
+                        }
+                        else if (User.IsInRole("Teacher"))
+                        {
+                            <a asp-controller="Quiz" asp-action="ListByCourse" asp-route-courseId="@item.CourseId" class="btn btn-outline-primary btn-sm">Quizzes</a>
+                        }
+                        else if (item.IsPremium)
+                        {
+                            <a asp-Controller="Payment" asp-action="CreatePayment" asp-route-courseId="@item.CourseId" class="btn btn-warning btn-sm">Enroll</a>
+                        }
+                        else
+                        {
+                            <a asp-controller="Content" asp-action="CourseContents" asp-route-courseId="@item.CourseId" class="btn btn-primary btn-sm">Content</a>
+                        }
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="5" class="text-center">No courses available.</td>
+            </tr>
+        }
+    </tbody>
+</table>
+@section Scripts {
+    <script>
+        // Initialize DataTables if available
+        if (window.DataTable) {
+            const table = new DataTable('#coursesTable', {
+                searchable: true,
+                paging: true,
+                fixedHeight: false
+            });
+        }
+    </script>
+}

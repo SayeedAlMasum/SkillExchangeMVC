@@ -1,0 +1,36 @@
+@model IEnumerable<SkillExchangeMVC.Models.Certificate>
+@{
+    ViewData["Title"] = "My Certificates";
+    var courseTitles = ViewBag.CourseTitles as IDictionary<int, string>;
+}
+<h2>My Certificates</h2>
+@if (!Model.Any())
+{
+    <p>No certificates yet.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Course</th>
+                <th>Certificate #</th>
+                <th>Issued On</th>
+                <th>Score</th>
+                <th>Grade</th>
+            </tr>
+        </thead>
+        <tbody>
+@foreach (var c in Model)
+{
+    <tr>
+        <td>@(courseTitles != null && courseTitles.ContainsKey(c.CourseId) ? courseTitles[c.CourseId] : c.CourseId.ToString())</td>
+        <td>@c.CertificateNumber</td>
+        <td>@c.IssuedOn</td>
+        <td>@c.Score</td>
+        <td>@c.Grade</td>
+    </tr>
+}
+        </tbody>
+    </table>
+}

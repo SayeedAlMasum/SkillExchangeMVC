@@ -1,0 +1,78 @@
+﻿@* IndexContent.cshtml *@
+@model List<SkillExchangeMVC.Models.Content>
+
+@{
+    ViewData["Title"] = "Manage Uploaded Content";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Manage Your Uploaded Content</h2>
+
+<table id="contentTable" class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Type</th>
+            <th>URL</th>
+            <th>Course</th>
+            <th>Created</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Title</td>
+                <td>@item.Description</td>
+                <td>@item.Type</td>
+                <td><a href="@item.URL" target="_blank">View</a></td>
+                <td>@item.CourseId</td>
+                <td>@item.CreatedDate.ToString("g")</td>
+                <td>
+                    <a asp-action="EditContent" asp-route-id="@item.ContentId" class="btn btn-warning btn-sm">Edit</a>
+                    <button class="btn btn-danger btn-sm" onclick="deleteContent(@item.ContentId)">Delete</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#contentTable').DataTable();
+        });
+
+        function deleteContent(id) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'You will not be able to recover this content!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/Content/DeleteContent/' + id,
+                        type: 'POST',
+                        success: function (res) {
+                            if (res.success) {
+                                Swal.fire('Deleted!', res.message, 'success')
+                                    .then(() => location.reload());
+                            } else {
+                                Swal.fire('Error!', res.message, 'error');
+                            }
+                        }
+                    });
+                }
+            });
+        }
+    </script>
+}

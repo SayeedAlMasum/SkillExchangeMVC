@@ -1,0 +1,26 @@
+﻿@* Requirement/Index.cshtml *@
+@model IEnumerable<SkillExchangeMVC.Models.RequirementDocument>
+@{
+    ViewData["Title"] = "Uploaded Requirement Documents";
+}
+<h2>@ViewData["Title"]</h2>
+
+<table class="table table-bordered">
+    <tr>
+        <th>File Name</th>
+        <th>Uploaded By</th>
+        <th>Date</th>
+        <th>Download</th>
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.FileName</td>
+            <td>@item.UploadedBy</td>
+            <td>@item.UploadDate.ToShortDateString()</td>
+            <td>
+                <a href="@Url.Content("~/requirements/" + item.FileName)" class="btn btn-success" target="_blank">Download</a>
+            </td>
+        </tr>
+    }
+</table>

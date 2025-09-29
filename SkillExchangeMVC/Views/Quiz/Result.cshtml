@@ -1,0 +1,17 @@
+@model SkillExchangeMVC.Models.QuizAttempt
+@{
+    ViewData["Title"] = "Quiz Result";
+    var quiz = ViewBag.Quiz as SkillExchangeMVC.Models.Quiz;
+    var cert = ViewBag.Certificate as SkillExchangeMVC.Models.Certificate;
+}
+<h2>Result</h2>
+<p>Quiz: @quiz?.Title</p>
+<p>Score: @Model.Score / @quiz?.TotalMarks</p>
+<p>Passed: @(Model.Passed ? "Yes" : "No")</p>
+@if (cert != null)
+{
+    <h3>Certificate issued</h3>
+    <p>Number: @cert.CertificateNumber</p>
+    <p>Issued on: @cert.IssuedOn</p>
+    <p>Grade: @cert.Grade</p>
+}

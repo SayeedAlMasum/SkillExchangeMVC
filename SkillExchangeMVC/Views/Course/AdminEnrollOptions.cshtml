@@ -1,0 +1,9 @@
+@model SkillExchangeMVC.Models.Course
+@{
+    ViewData["Title"] = "Enroll Options";
+}
+<h2>Enroll Options for @Model.Title</h2>
+<div>
+    <a class="btn btn-warning" asp-controller="Payment" asp-action="CreatePayment" asp-route-courseId="@Model.CourseId">Payment (existing)</a>
+    <a class="btn btn-success" asp-controller="Course" asp-action="AdminEnrollWithoutPayment" asp-route-id="@Model.CourseId">Enroll without payment</a>
+</div>

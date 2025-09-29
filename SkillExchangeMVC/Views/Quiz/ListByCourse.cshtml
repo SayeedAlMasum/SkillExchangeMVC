@@ -1,0 +1,45 @@
+@model IEnumerable<SkillExchangeMVC.Models.Quiz>
+@{
+    var course = ViewBag.Course as SkillExchangeMVC.Models.Course;
+    ViewData["Title"] = $"Quizzes - {course?.Title}";
+}
+<h2>Quizzes for @course?.Title</h2>
+<p>
+    @if (User.IsInRole("Teacher") || User.IsInRole("Admin"))
+    {
+        <a class="btn btn-primary" asp-action="Create" asp-route-courseId="@course.CourseId">Schedule Quiz/Exam</a>
+    }
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Start</th>
+            <th>End</th>
+            <th>Type</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var q in Model)
+{
+    <tr>
+        <td>@q.Title</td>
+        <td>@q.StartTime</td>
+        <td>@q.EndTime</td>
+        <td>@(q.IsExam ? "Exam" : "Quiz")</td>
+        <td>
+            <a class="btn btn-sm btn-outline-secondary" asp-action="Details" asp-route-id="@q.QuizId">Details</a>
+            @if (User.IsInRole("Teacher") || User.IsInRole("Admin"))
+            {
+                <a class="btn btn-sm btn-outline-primary" asp-controller="QuizQuestion" asp-action="Manage" asp-route-quizId="@q.QuizId">Manage Questions</a>
+            }
+            @if (User.IsInRole("Student") || User.IsInRole("Admin"))
+            {
+                <a class="btn btn-sm btn-success" asp-action="Take" asp-route-id="@q.QuizId">Take</a>
+            }
+        </td>
+    </tr>
+}
+    </tbody>
+</table>

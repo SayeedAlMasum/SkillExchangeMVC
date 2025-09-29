@@ -1,0 +1,37 @@
+﻿@* TeacherCourses.cshtml *@
+@model List<SkillExchangeMVC.Models.Course>
+
+<h2>Your Assigned Courses</h2>
+
+@if (!Model.Any())
+{
+    <p>You are not assigned to any courses.</p>
+}
+else
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Category</th>
+                <th>SubCategory</th>
+                <th>Premium</th>
+                <th>Quiz/Exam</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var course in Model)
+            {
+                <tr>
+                    <td>@course.Title</td>
+                    <td>@course.Category</td>
+                    <td>@course.SubCategory</td>
+                    <td>@(course.IsPremium ? "Yes" : "No")</td>
+                    <td>
+                        <a class="btn btn-sm btn-primary" asp-controller="Quiz" asp-action="Create" asp-route-courseId="@course.CourseId">Schedule Quiz/Exam</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

@@ -1,0 +1,37 @@
+@model IEnumerable<SkillExchangeMVC.Models.Content>
+@{
+    var course = ViewBag.Course as SkillExchangeMVC.Models.Course;
+    ViewData["Title"] = $"Contents - {course?.Title}";
+}
+<h2>Contents - @course?.Title</h2>
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+<table class="table">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Type</th>
+            <th>Description</th>
+            <th>Open</th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var c in Model)
+{
+    <tr>
+        <td>@c.Title</td>
+        <td>@c.Type</td>
+        <td>@c.Description</td>
+        <td>
+            @if (c.Type == "Link") {
+                <a href="@c.URL" target="_blank">Open Link</a>
+            } else {
+                <a href="@c.URL" target="_blank">Open</a>
+            }
+        </td>
+    </tr>
+}
+    </tbody>
+</table>

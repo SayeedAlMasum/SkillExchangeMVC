@@ -1,0 +1,79 @@
+@model IEnumerable<SkillExchangeMVC.Models.QuizQuestion>
+@{
+    var quiz = ViewBag.Quiz as SkillExchangeMVC.Models.Quiz;
+    var options = ViewBag.Options as IDictionary<int, List<SkillExchangeMVC.Models.QuizOption>>;
+    ViewData["Title"] = $"Manage Questions - {quiz?.Title}";
+}
+<h2>Manage Questions - @quiz?.Title</h2>
+
+<div class="card mb-3">
+    <div class="card-body">
+        <form asp-controller="QuizQuestion" asp-action="AddQuestion" method="post" class="row g-2">
+            <input type="hidden" name="quizId" value="@quiz?.QuizId" />
+            <div class="col-md-8">
+                <input name="text" class="form-control" placeholder="Enter question text" />
+            </div>
+            <div class="col-md-2">
+                <input name="marks" type="number" min="1" value="1" class="form-control" />
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-primary w-100" type="submit">Add Question</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+@foreach (var q in Model)
+{
+    <div class="card mb-3">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <div><strong>Q@q.Order.</strong> @q.Text (@q.Marks mark(s))</div>
+            <form asp-controller="QuizQuestion" asp-action="DeleteQuestion" method="post" class="m-0">
+                <input type="hidden" name="id" value="@q.QuizQuestionId" />
+                <input type="hidden" name="quizId" value="@quiz?.QuizId" />
+                <button class="btn btn-sm btn-outline-danger" type="submit">Delete Question</button>
+            </form>
+        </div>
+        <div class="card-body">
+            <ul class="list-group mb-3">
+                @if (options != null && options.ContainsKey(q.QuizQuestionId))
+                {
+                    foreach (var op in options[q.QuizQuestionId].OrderBy(o => o.Order))
+                    {
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>@op.Text @if(op.IsCorrect){<span class="badge bg-success ms-2">Correct</span>}</span>
+                            <form asp-controller="QuizQuestion" asp-action="DeleteOption" method="post" class="m-0">
+                                <input type="hidden" name="id" value="@op.QuizOptionId" />
+                                <button class="btn btn-sm btn-outline-danger" type="submit">Delete</button>
+                            </form>
+                        </li>
+                    }
+                }
+                else
+                {
+                    <li class="list-group-item">No options yet.</li>
+                }
+            </ul>
+            <form asp-controller="QuizQuestion" asp-action="AddOption" method="post" class="row g-2">
+                <input type="hidden" name="questionId" value="@q.QuizQuestionId" />
+                <div class="col-md-9">
+                    <input name="text" class="form-control" placeholder="Option text" />
+                </div>
+                <div class="col-md-2 d-flex align-items-center">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="isCorrect" value="true" id="isCorrect_@q.QuizQuestionId" />
+                        <label class="form-check-label" for="isCorrect_@q.QuizQuestionId">Correct</label>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <button class="btn btn-outline-primary w-100" type="submit">Add</button>
+                </div>
+            </form>
+        </div>
+    </div>
+}

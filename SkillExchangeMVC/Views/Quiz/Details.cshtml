@@ -1,0 +1,20 @@
+@model SkillExchangeMVC.Models.Quiz
+@{
+    ViewData["Title"] = "Quiz Details";
+}
+<h2>@Model.Title</h2>
+<p>Start: @Model.StartTime</p>
+<p>End: @Model.EndTime</p>
+<p>Type: @(Model.IsExam ? "Exam" : "Quiz")</p>
+@if (User.IsInRole("Teacher") || User.IsInRole("Admin"))
+{
+    <a class="btn btn-outline-secondary btn-sm" asp-controller="QuizQuestion" asp-action="Manage" asp-route-quizId="@Model.QuizId">Manage Questions</a>
+}
+@if (User.IsInRole("Student") || User.IsInRole("Admin"))
+{
+    <a class="btn btn-primary btn-sm" asp-action="Take" asp-route-id="@Model.QuizId">Take Quiz</a>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}

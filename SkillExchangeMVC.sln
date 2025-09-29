@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35919.96 d17.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkillExchangeMVC", "SkillExchangeMVC\SkillExchangeMVC.csproj", "{A2C22BF0-CE73-433D-AC58-A0CA9537A67B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A2C22BF0-CE73-433D-AC58-A0CA9537A67B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2C22BF0-CE73-433D-AC58-A0CA9537A67B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2C22BF0-CE73-433D-AC58-A0CA9537A67B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2C22BF0-CE73-433D-AC58-A0CA9537A67B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0792001B-8B70-4785-B7AA-4D511C28E333}
+	EndGlobalSection
+EndGlobal
