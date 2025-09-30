@@ -6,6 +6,7 @@ using SkillExchangeMVC.Models;
 using SkillExchangeMVC.Models.Context;
 using System.Security.Claims;
 using System.Linq;
+using SkiaSharp;
 
 namespace SkillExchangeMVC.Controllers
 {
@@ -221,6 +222,154 @@ namespace SkillExchangeMVC.Controllers
             var courseLookup = _db.Course.ToDictionary(c => c.CourseId, c => c.Title);
             ViewBag.CourseTitles = courseLookup;
             return View("MyCertificates", certs);
+        }
+
+        [Authorize(Roles = "Student,Admin")]
+        public IActionResult DownloadCertificate(int id)
+        {
+            // id is CertificateId
+            var email = User.FindFirstValue(ClaimTypes.Email);
+            var currentUserId = _db.UserInfo.FirstOrDefault(u => u.Email == email)?.UserInfoId;
+            if (currentUserId == null) return Unauthorized();
+
+            var cert = _db.Certificates.FirstOrDefault(c => c.CertificateId == id);
+            if (cert == null) return NotFound();
+
+            // Only owner or admin can download
+            if (!User.IsInRole("Admin") && cert.UserInfoId != currentUserId)
+            {
+                return Forbid();
+            }
+
+            var course = _db.Course.FirstOrDefault(c => c.CourseId == cert.CourseId);
+            var user = _db.UserInfo.FirstOrDefault(u => u.UserInfoId == cert.UserInfoId);
+            var courseTitle = course?.Title ?? $"Course #{cert.CourseId}";
+            var studentName = user?.Name ?? "Student";
+
+            // Generate a simple PDF certificate using SkiaSharp
+            using var ms = new MemoryStream();
+            using (var document = SKDocument.CreatePdf(ms))
+            {
+                // A4 portrait at 72 DPI => 595 x 842 points
+                const float pageWidth = 595f;
+                const float pageHeight = 842f;
+                using var canvas = document.BeginPage(pageWidth, pageHeight);
+
+                // Background
+                canvas.Clear(SKColors.White);
+
+                // Border
+                using (var borderPaint = new SKPaint
+                {
+                    Color = new SKColor(9, 54, 114), // #093672
+                    Style = SKPaintStyle.Stroke,
+                    StrokeWidth = 6,
+                    IsAntialias = true
+                })
+                {
+                    var margin = 24f;
+                    canvas.DrawRect(margin, margin, pageWidth - margin * 2, pageHeight - margin * 2, borderPaint);
+                }
+
+                // Header
+                using var titlePaint = new SKPaint
+                {
+                    Color = SKColors.Black,
+                    IsAntialias = true,
+                    TextSize = 36,
+                    TextAlign = SKTextAlign.Center,
+                    Typeface = SKTypeface.FromFamilyName("Segoe UI", SKFontStyle.Bold)
+                };
+                canvas.DrawText("Certificate of Achievement", pageWidth / 2, 120, titlePaint);
+
+                // Subtitle
+                using var subPaint = new SKPaint
+                {
+                    Color = new SKColor(90, 90, 90),
+                    IsAntialias = true,
+                    TextSize = 18,
+                    TextAlign = SKTextAlign.Center
+                };
+                canvas.DrawText("This certificate is proudly presented to", pageWidth / 2, 160, subPaint);
+
+                // Student Name
+                using var namePaint = new SKPaint
+                {
+                    Color = new SKColor(9, 54, 114),
+                    IsAntialias = true,
+                    TextSize = 30,
+                    TextAlign = SKTextAlign.Center,
+                    Typeface = SKTypeface.FromFamilyName("Segoe UI", SKFontStyle.Bold)
+                };
+                canvas.DrawText(studentName, pageWidth / 2, 210, namePaint);
+
+                // Course line
+                using var bodyPaint = new SKPaint
+                {
+                    Color = SKColors.Black,
+                    IsAntialias = true,
+                    TextSize = 16,
+                    TextAlign = SKTextAlign.Center
+                };
+                canvas.DrawText($"for successfully completing the course", pageWidth / 2, 250, bodyPaint);
+                using var coursePaint = new SKPaint
+                {
+                    Color = new SKColor(0, 128, 96),
+                    IsAntialias = true,
+                    TextSize = 22,
+                    TextAlign = SKTextAlign.Center,
+                    Typeface = SKTypeface.FromFamilyName("Segoe UI", SKFontStyle.Bold)
+                };
+                canvas.DrawText(courseTitle, pageWidth / 2, 285, coursePaint);
+
+                // Details box
+                float boxLeft = 60, boxTop = 330, boxRight = pageWidth - 60, boxBottom = 470;
+                using (var boxPaint = new SKPaint { Color = new SKColor(240, 248, 255) })
+                {
+                    canvas.DrawRect(SKRect.Create(boxLeft, boxTop, boxRight - boxLeft, boxBottom - boxTop), boxPaint);
+                }
+                using (var boxBorder = new SKPaint { Color = new SKColor(200, 220, 235), Style = SKPaintStyle.Stroke, StrokeWidth = 2 })
+                {
+                    canvas.DrawRect(SKRect.Create(boxLeft, boxTop, boxRight - boxLeft, boxBottom - boxTop), boxBorder);
+                }
+
+                using var labelPaint = new SKPaint { Color = new SKColor(80, 80, 80), TextSize = 14, IsAntialias = true };
+                using var valuePaint = new SKPaint { Color = SKColors.Black, TextSize = 16, IsAntialias = true, Typeface = SKTypeface.FromFamilyName("Segoe UI", SKFontStyle.Bold) };
+
+                float lineY = boxTop + 35;
+                float labelX = boxLeft + 20;
+                float valueX = boxLeft + 170;
+
+                void DrawPair(string label, string value)
+                {
+                    canvas.DrawText(label, labelX, lineY, labelPaint);
+                    canvas.DrawText(value ?? string.Empty, valueX, lineY, valuePaint);
+                    lineY += 32;
+                }
+
+                DrawPair("Certificate No:", cert.CertificateNumber);
+                DrawPair("Issued On:", cert.IssuedOn.ToString("yyyy-MM-dd"));
+                DrawPair("Score:", cert.Score.ToString());
+                DrawPair("Grade:", cert.Grade);
+
+                // Footer/signature lines
+                using var sigPaint = new SKPaint { Color = SKColors.Black, StrokeWidth = 1.5f, IsAntialias = true };
+                float sigY = boxBottom + 80;
+                canvas.DrawLine(80, sigY, 250, sigY, sigPaint);
+                canvas.DrawLine(pageWidth - 250, sigY, pageWidth - 80, sigY, sigPaint);
+
+                using var sigText = new SKPaint { Color = new SKColor(90, 90, 90), TextSize = 12, IsAntialias = true, TextAlign = SKTextAlign.Center };
+                canvas.DrawText("Student", 165, sigY + 16, sigText);
+                canvas.DrawText("Authorized", pageWidth - 165, sigY + 16, sigText);
+
+                document.EndPage();
+                document.Close();
+            }
+
+            var safeCourse = string.Join("_", (courseTitle ?? "Course").Split(Path.GetInvalidFileNameChars(), StringSplitOptions.RemoveEmptyEntries));
+            var fileName = $"Certificate_{safeCourse}_{cert.CertificateNumber}.pdf";
+            var bytes = ms.ToArray();
+            return File(bytes, "application/pdf", fileName);
         }
 
         private string GetGrade(int score, int total)

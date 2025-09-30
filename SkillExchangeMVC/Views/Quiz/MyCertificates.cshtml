@@ -18,6 +18,7 @@ else
                 <th>Issued On</th>
                 <th>Score</th>
                 <th>Grade</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -29,6 +30,9 @@ else
         <td>@c.IssuedOn</td>
         <td>@c.Score</td>
         <td>@c.Grade</td>
+        <td>
+            <a class="btn btn-sm btn-primary" asp-controller="Quiz" asp-action="DownloadCertificate" asp-route-id="@c.CertificateId">Download</a>
+        </td>
     </tr>
 }
         </tbody>
