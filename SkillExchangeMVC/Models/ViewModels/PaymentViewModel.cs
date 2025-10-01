@@ -6,21 +6,36 @@ namespace SkillExchangeMVC.Models.ViewModels
 {
     public class PaymentViewModel
     {
-        public Course? Course { get; set; } // To show course title and other info
-        [Required]
+        // Course for display purposes only - no validation
+        public Course? Course { get; set; }
+        
+        [Required(ErrorMessage = "Please select a payment method.")]
+        [Display(Name = "Payment Method")]
+        public string PaymentMethod { get; set; } = "Card"; // Card, Bkash
+
+        // Card payment fields - conditional validation handled in controller
         [Display(Name = "Card Number")]
-        [CreditCard(ErrorMessage = "Invalid card number.")]
         public string? CardNumber { get; set; }
 
-        [Required]
         [Display(Name = "Expiry Date")]
         [DataType(DataType.Date)]
-        public DateTime ExpiryDate { get; set; }
+        public DateTime? ExpiryDate { get; set; }
 
-        [Required]
-        [Display(Name = "Card Holder Name")]
-        [StringLength(100, MinimumLength = 3, ErrorMessage = "CVV must be 3 or 4 digits")]
+        [Display(Name = "CVV")]
         public string? CVV { get; set; }
-     }
- }
+
+        // Bkash payment fields - conditional validation handled in controller
+        [Display(Name = "Mobile Number")]
+        public string? BkashMobileNumber { get; set; }
+
+        [Display(Name = "Reference")]
+        public string? PayerReference { get; set; }
+
+        // Amount - basic validation
+        [Required(ErrorMessage = "Amount is required.")]
+        [Range(0.01, double.MaxValue, ErrorMessage = "Amount must be greater than 0.")]
+        [Display(Name = "Amount")]
+        public decimal Amount { get; set; }
+    }
+}
 

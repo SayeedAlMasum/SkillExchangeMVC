@@ -64,9 +64,16 @@ namespace SkillExchangeMVC.Controllers
                 viewModel.Course.CreatedDate = DateTime.Now;
                 viewModel.Course.UpdatedDate = DateTime.Now;
 
+                // Ensure price is not negative
+                if (viewModel.Course.Price < 0)
+                {
+                    viewModel.Course.Price = 0;
+                }
+
                 _skillExchangeContext.Course.Add(viewModel.Course);
                 _skillExchangeContext.SaveChanges();
 
+                TempData["Success"] = $"Course '{viewModel.Course.Title}' created successfully with price ৳{viewModel.Course.Price ?? 0}";
                 return RedirectToAction("CreateCourse");
             }
 
@@ -102,17 +109,32 @@ namespace SkillExchangeMVC.Controllers
                 var existing = _skillExchangeContext.Course.FirstOrDefault(c => c.CourseId == updatedCourse.CourseId);
                 if (existing == null) return NotFound();
 
+                // Store old price for comparison
+                var oldPrice = existing.Price ?? 0;
+
                 existing.Title = updatedCourse.Title;
                 existing.Description = updatedCourse.Description;
                 existing.Category = updatedCourse.Category;
                 existing.SubCategory = updatedCourse.SubCategory;
                 existing.IsPremium = updatedCourse.IsPremium;
+                existing.Price = updatedCourse.Price >= 0 ? updatedCourse.Price : 0; // Ensure price is not negative
 
                 var name = User.FindFirstValue(ClaimTypes.Name);
                 existing.UpdatedBy = name ?? "Unknown";
                 existing.UpdatedDate = DateTime.Now;
 
                 _skillExchangeContext.SaveChanges();
+
+                // Show success message with price update info
+                if (oldPrice != existing.Price)
+                {
+                    TempData["Success"] = $"Course '{existing.Title}' updated successfully. Price changed from ৳{oldPrice} to ৳{existing.Price ?? 0}";
+                }
+                else
+                {
+                    TempData["Success"] = $"Course '{existing.Title}' updated successfully.";
+                }
+
                 return RedirectToAction("CreateCourse");
             }
 
@@ -131,6 +153,7 @@ namespace SkillExchangeMVC.Controllers
             _skillExchangeContext.Course.Remove(course);
             _skillExchangeContext.SaveChanges();
 
+            TempData["Success"] = $"Course '{course.Title}' deleted successfully.";
             return RedirectToAction("CreateCourse");
         }
 
@@ -157,6 +180,14 @@ namespace SkillExchangeMVC.Controllers
             if (studentId == null) return Unauthorized();
             var course = _skillExchangeContext.Course.FirstOrDefault(c => c.CourseId == id);
             if (course == null) return NotFound();
+
+            // Check if course has a price and user needs to pay
+            if (course.Price > 0 && !User.IsInRole("Admin"))
+            {
+                // Redirect to payment page for paid courses
+                return RedirectToAction("CreatePayment", "Payment", new { courseId = id });
+            }
+
             var exists = _skillExchangeContext.Enrollments.Any(e => e.CourseId == id && e.UserInfoId == studentId);
             if (!exists)
             {
@@ -201,6 +232,33 @@ namespace SkillExchangeMVC.Controllers
                 _skillExchangeContext.SaveChanges();
             }
             return RedirectToAction("CourseContents", "Content", new { courseId = id });
+        }
+
+        // New action for quick price update
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public IActionResult UpdatePrice(int courseId, decimal price)
+        {
+            var course = _skillExchangeContext.Course.FirstOrDefault(c => c.CourseId == courseId);
+            if (course == null)
+            {
+                return Json(new { success = false, message = "Course not found" });
+            }
+
+            var oldPrice = course.Price ?? 0;
+            course.Price = price >= 0 ? price : 0;
+            
+            var name = User.FindFirstValue(ClaimTypes.Name);
+            course.UpdatedBy = name ?? "Unknown";
+            course.UpdatedDate = DateTime.Now;
+
+            _skillExchangeContext.SaveChanges();
+
+            return Json(new { 
+                success = true, 
+                message = $"Price updated from ৳{oldPrice} to ৳{course.Price}",
+                newPrice = course.Price
+            });
         }
     }
 }

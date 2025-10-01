@@ -23,7 +23,7 @@ namespace SkillExchangeMVC.Models.Context
         public DbSet<QuizQuestion> QuizQuestions { get; set; }
         public DbSet<QuizOption> QuizOptions { get; set; }
         public DbSet<QuizResponse> QuizResponses { get; set; }
-
+        public DbSet<Payment> Payment { get; set; }
     }
 }
 

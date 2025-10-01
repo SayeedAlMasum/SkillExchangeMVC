@@ -25,6 +25,9 @@ namespace SkillExchangeMVC.Models
         [Required]
         public bool IsPremium { get; set; }  
 
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal? Price { get; set; } = 0;
+
         [Required]
         public string TeacherId { get; set; } = string.Empty;
     }

@@ -1,73 +1,183 @@
 ﻿@* Course/Index.cshtml *@
 @model CourseViewModel
 
-<h2>Available Courses</h2>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Available Courses</h2>
+        @if (User.IsInRole("Admin"))
+        {
+            <a href="@Url.Action("CreateCourse")" class="btn btn-success">
+                <i class="fas fa-plus"></i> Add New Course
+            </a>
+        }
+    </div>
 
-@if (TempData["Error"] != null)
-{
-    <div class="alert alert-danger">@TempData["Error"]</div>
-}
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
 
-<!-- List of Available Courses -->
-<table id="coursesTable" class="table table-bordered table-striped">
-    <thead>
-        <tr>
-            <th>Title</th>
-            <th>Category</th>
-            <th>Subcategory</th>
-            <th>Is Premium</th>
-            <th>Operation</th>
-        </tr>
-    </thead>
-    <tbody id="courseTable">
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (TempData["Info"] != null)
+    {
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+            @TempData["Info"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <!-- Course Cards Layout -->
+    <div class="row">
         @if (Model.Courses?.Any() ?? false)
         {
             @foreach (var item in Model.Courses)
             {
-                <tr>
-                    <td>@item.Title</td>
-                    <td>@item.Category</td>
-                    <td>@item.SubCategory</td>
-                    <td>@item.IsPremium</td>
-                    <td>
-                        @if (User.IsInRole("Admin"))
-                        {
-                            <a asp-controller="Course" asp-action="AdminEnrollOptions" asp-route-id="@item.CourseId" class="btn btn-secondary btn-sm">Enroll</a>
-                            <a asp-controller="Quiz" asp-action="ListByCourse" asp-route-courseId="@item.CourseId" class="btn btn-outline-primary btn-sm">Quizzes</a>
-                        }
-                        else if (User.IsInRole("Teacher"))
-                        {
-                            <a asp-controller="Quiz" asp-action="ListByCourse" asp-route-courseId="@item.CourseId" class="btn btn-outline-primary btn-sm">Quizzes</a>
-                        }
-                        else if (item.IsPremium)
-                        {
-                            <a asp-Controller="Payment" asp-action="CreatePayment" asp-route-courseId="@item.CourseId" class="btn btn-warning btn-sm">Enroll</a>
-                        }
-                        else
-                        {
-                            <a asp-controller="Content" asp-action="CourseContents" asp-route-courseId="@item.CourseId" class="btn btn-primary btn-sm">Content</a>
-                        }
-                    </td>
-                </tr>
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100 course-card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="card-title mb-0">@item.Title</h5>
+                            @if (item.IsPremium)
+                            {
+                                <span class="badge bg-warning text-dark">Premium</span>
+                            }
+                        </div>
+                        <div class="card-body d-flex flex-column">
+                            <p class="card-text">@item.Description</p>
+                            <div class="mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-folder"></i> @item.Category > @item.SubCategory
+                                </small>
+                            </div>
+                            
+                            <!-- Price Display -->
+                            <div class="mb-3">
+                                @if (item.Price == null || item.Price == 0)
+                                {
+                                    <h4 class="text-success mb-0">
+                                        <i class="fas fa-tag"></i> FREE
+                                    </h4>
+                                    <small class="text-muted">No payment required</small>
+                                }
+                                else
+                                {
+                                    <h4 class="text-primary mb-0">
+                                        <i class="fas fa-tag"></i> ৳@item.Price
+                                    </h4>
+                                    <small class="text-muted">One-time payment</small>
+                                }
+                            </div>
+
+                            <div class="mt-auto">
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <div class="btn-group d-flex" role="group">
+                                        <a asp-controller="Course" asp-action="AdminEnrollOptions" asp-route-id="@item.CourseId" 
+                                           class="btn btn-secondary btn-sm">
+                                            <i class="fas fa-user-plus"></i> Enroll
+                                        </a>
+                                        <a asp-controller="Quiz" asp-action="ListByCourse" asp-route-courseId="@item.CourseId" 
+                                           class="btn btn-outline-primary btn-sm">
+                                            <i class="fas fa-question-circle"></i> Quizzes
+                                        </a>
+                                    </div>
+                                }
+                                else if (User.IsInRole("Teacher"))
+                                {
+                                    <a asp-controller="Quiz" asp-action="ListByCourse" asp-route-courseId="@item.CourseId" 
+                                       class="btn btn-outline-primary btn-sm w-100">
+                                        <i class="fas fa-question-circle"></i> Manage Quizzes
+                                    </a>
+                                }
+                                else if (User.IsInRole("Student"))
+                                {
+                                    @if (item.Price == null || item.Price == 0)
+                                    {
+                                        <!-- Free Course -->
+                                        <form method="post" asp-controller="Course" asp-action="Enroll" asp-route-id="@item.CourseId" class="w-100">
+                                            <button type="submit" class="btn btn-success w-100">
+                                                <i class="fas fa-play"></i> Start Free Course
+                                            </button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <!-- Paid Course -->
+                                        <a asp-controller="Payment" asp-action="CreatePayment" asp-route-courseId="@item.CourseId" 
+                                           class="btn btn-primary w-100">
+                                            <i class="fas fa-credit-card"></i> Enroll Now - ৳@item.Price
+                                        </a>
+                                    }
+                                }
+                                else
+                                {
+                                    <!-- Not logged in or other roles -->
+                                    <a href="@Url.Action("CreateLogin", "Login")" class="btn btn-info w-100">
+                                        <i class="fas fa-sign-in-alt"></i> Login to Enroll
+                                    </a>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
             }
         }
         else
         {
-            <tr>
-                <td colspan="5" class="text-center">No courses available.</td>
-            </tr>
+            <div class="col-12">
+                <div class="alert alert-info text-center">
+                    <i class="fas fa-info-circle"></i> No courses available at the moment.
+                </div>
+            </div>
         }
-    </tbody>
-</table>
+    </div>
+</div>
+
+<style>
+    .course-card {
+        transition: transform 0.2s ease-in-out;
+        border: 1px solid #dee2e6;
+    }
+    
+    .course-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    
+    .card-title {
+        color: #2c3e50;
+        font-weight: 600;
+    }
+    
+    .course-price {
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
+</style>
+
 @section Scripts {
     <script>
-        // Initialize DataTables if available
-        if (window.DataTable) {
-            const table = new DataTable('#coursesTable', {
-                searchable: true,
-                paging: true,
-                fixedHeight: false
-            });
-        }
+        // Add any additional JavaScript functionality here
+        document.addEventListener('DOMContentLoaded', function() {
+            // Auto-hide alerts after 5 seconds
+            setTimeout(function() {
+                var alerts = document.querySelectorAll('.alert');
+                alerts.forEach(function(alert) {
+                    var bsAlert = new bootstrap.Alert(alert);
+                    if (bsAlert) {
+                        bsAlert.close();
+                    }
+                });
+            }, 5000);
+        });
     </script>
 }

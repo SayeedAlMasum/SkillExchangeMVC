@@ -3,6 +3,7 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using SkillExchangeMVC.Models.Context;
+using SkillExchangeMVC.Services;
 using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +12,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<SkillExchangeContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// ✅ Add HTTP client for Bkash service
+builder.Services.AddHttpClient<IBkashService, BkashService>();
+builder.Services.AddScoped<IBkashService, BkashService>();
 
 // ✅ Cookie Authentication
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
