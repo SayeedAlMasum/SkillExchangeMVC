@@ -1,46 +1,255 @@
 ﻿@* Home/Index.cshtml *@
-<!-- Hero Section -->
-<section class="hero-section-fullwidth text-center d-flex align-items-center justify-content-center">
-    <div class="overlay"></div>
-    <div class="content text-white">
-        <h1 class="fw-bold">JOIN US</h1>
-        <p class="lead">Build Your Epic Career with SkillExchange</p>
-        <a href="/Course/IndexCourse" class="btn btn-gradient mt-3">View Opportunities</a>
+@{
+    ViewData["Title"] = "SkillExchange - Learn, Teach, Grow";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/modern-home.css" />
+}
+
+<!-- Modern Hero Section with Gradient Overlay -->
+<section class="modern-hero-section">
+    <div class="hero-particles"></div>
+    <div class="hero-gradient-overlay"></div>
+    <div class="hero-content">
+        <div class="hero-text-container">
+            <div class="hero-badge">
+                <i class="fas fa-graduation-cap"></i>
+                <span>Premium Learning Platform</span>
+            </div>
+            <h1 class="hero-title">
+                Transform Your Career with
+                <span class="gradient-text">SkillExchange</span>
+            </h1>
+            <p class="hero-subtitle">
+                Join thousands of professionals who are advancing their careers through 
+                collaborative learning and skill sharing
+            </p>
+            <div class="hero-buttons">
+                <a href="/Course/IndexCourse" class="btn-modern btn-primary-modern">
+                    <i class="fas fa-rocket"></i>
+                    Explore Courses
+                </a>
+                <a href="#features" class="btn-modern btn-outline-modern">
+                    <i class="fas fa-play"></i>
+                    Learn More
+                </a>
+            </div>
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <span class="stat-number">10K+</span>
+                    <span class="stat-label">Active Learners</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">500+</span>
+                    <span class="stat-label">Expert Instructors</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">1K+</span>
+                    <span class="stat-label">Courses Available</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="hero-scroll-indicator">
+        <div class="scroll-arrow"></div>
     </div>
 </section>
 
-
-
-<!-- Testimonials Section -->
-<div class="container mt-5 mb-5">
-    <h2 class="text-center text-primary mb-4">What Our Users Are Saying</h2>
-    <div class="row">
-        <div class="col-md-4">
-            <div class="testimonial-card text-center p-4">
-                <img src="" alt="User" class="rounded-circle mb-3">
-                <h5 class="text-primary">Jane Doe</h5>
-                <p class="text-muted">"SkillExchange transformed my career by allowing me to share my knowledge while learning new skills."</p>
-            </div>
+<!-- Features Section -->
+<section id="features" class="features-section">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Why Choose SkillExchange?</h2>
+            <p class="section-subtitle">Discover the features that make learning extraordinary</p>
         </div>
-        <div class="col-md-4">
-            <div class="testimonial-card text-center p-4">
-                <img src="" alt="User" class="rounded-circle mb-3">
-                <h5 class="text-primary">John Smith</h5>
-                <p class="text-muted">"The courses I found on SkillExchange have been pivotal to advancing my career. Highly recommend!"</p>
+        <div class="row">
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h4>Expert-Led Courses</h4>
+                    <p>Learn from industry professionals with real-world experience and proven expertise in their fields.</p>
+                </div>
             </div>
-        </div>
-        <div class="col-md-4">
-            <div class="testimonial-card text-center p-4">
-                <img src="" alt="User" class="rounded-circle mb-3">
-                <h5 class="text-primary">Emily White</h5>
-                <p class="text-muted">"Joining SkillExchange opened doors to amazing learning opportunities. It's a great place to grow!"</p>
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h4>Collaborative Learning</h4>
+                    <p>Connect with peers, share knowledge, and grow together in our vibrant learning community.</p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-certificate"></i>
+                    </div>
+                    <h4>Industry Certifications</h4>
+                    <p>Earn recognized certifications that boost your career prospects and validate your skills.</p>
+                </div>
             </div>
         </div>
     </div>
-</div>
-<!-- Call to Action Section -->
-<div class="container mt-5 text-center">
-    <h3 class="text-primary mb-4">Get Started with SkillExchange</h3>
-    <p class="text-dark">Ready to start your learning journey? Sign up today and access exclusive courses!</p>
-    <a asp-controller="Register" asp-action="CreateRegister" class="btn btn-success btn-lg btn-rounded pulse">Sign Up Now</a>
-</div>
+</section>
+
+<!-- Testimonials Section with Modern Design -->
+<section class="testimonials-section">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title text-white">Success Stories</h2>
+            <p class="section-subtitle text-white-50">Real experiences from our amazing community</p>
+        </div>
+        <div class="row">
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="testimonial-card-modern">
+                    <div class="testimonial-header">
+                        <div class="testimonial-avatar">
+                            <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100&h=100&fit=crop&crop=face" alt="Jane Doe" class="avatar-img">
+                        </div>
+                        <div class="testimonial-info">
+                            <h5>Jane Doe</h5>
+                            <span class="role">Software Engineer</span>
+                        </div>
+                        <div class="rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                    <p class="testimonial-text">
+                        "SkillExchange completely transformed my career trajectory. The quality of courses and 
+                        the supportive community helped me transition into tech successfully."
+                    </p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="testimonial-card-modern">
+                    <div class="testimonial-header">
+                        <div class="testimonial-avatar">
+                            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face" alt="John Smith" class="avatar-img">
+                        </div>
+                        <div class="testimonial-info">
+                            <h5>John Smith</h5>
+                            <span class="role">Product Manager</span>
+                        </div>
+                        <div class="rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                    <p class="testimonial-text">
+                        "The practical approach and hands-on projects made all the difference. 
+                        I've gained skills that I use daily in my current role."
+                    </p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="testimonial-card-modern">
+                    <div class="testimonial-header">
+                        <div class="testimonial-avatar">
+                            <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face" alt="Emily White" class="avatar-img">
+                        </div>
+                        <div class="testimonial-info">
+                            <h5>Emily White</h5>
+                            <span class="role">UX Designer</span>
+                        </div>
+                        <div class="rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                    <p class="testimonial-text">
+                        "Amazing platform with incredible instructors. The networking opportunities 
+                        alone have been worth the investment."
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Popular Categories Section -->
+<section class="categories-section">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Popular Categories</h2>
+            <p class="section-subtitle">Explore trending skills in high-demand fields</p>
+        </div>
+        <div class="row">
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="category-card">
+                    <div class="category-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <h5>Programming</h5>
+                    <p>150+ Courses</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="category-card">
+                    <div class="category-icon">
+                        <i class="fas fa-paint-brush"></i>
+                    </div>
+                    <h5>Design</h5>
+                    <p>80+ Courses</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="category-card">
+                    <div class="category-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h5>Business</h5>
+                    <p>120+ Courses</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="category-card">
+                    <div class="category-icon">
+                        <i class="fas fa-camera"></i>
+                    </div>
+                    <h5>Photography</h5>
+                    <p>60+ Courses</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action Section with Modern Design -->
+<section class="cta-section">
+    <div class="container">
+        <div class="cta-content">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h3 class="cta-title">Ready to Start Your Learning Journey?</h3>
+                    <p class="cta-subtitle">
+                        Join thousands of learners who are already advancing their careers with SkillExchange. 
+                        Start with a free account today!
+                    </p>
+                </div>
+                <div class="col-lg-4 text-lg-end">
+                    <a asp-controller="Register" asp-action="CreateRegister" class="btn-cta">
+                        <span>Get Started Now</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script src="~/js/modern-home.js"></script>
+}
