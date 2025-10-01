@@ -47,9 +47,23 @@ namespace SkillExchangeMVC.Controllers
                         var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                         var principal = new ClaimsPrincipal(identity);
 
-                        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+                        await HttpContext.SignInAsync(
+    CookieAuthenticationDefaults.AuthenticationScheme,
+    principal,
+    new AuthenticationProperties
+    {
+        IsPersistent = true, //  browser close করলেও cookie থাকবে
+        ExpiresUtc = DateTime.UtcNow.AddDays(7) //  ৭ দিন পর্যন্ত valid থাকবে
+    });
 
-                        return RedirectToAction("Index", "Home");
+                        if (user.Role == "Admin")
+                        {
+                            return RedirectToAction("Privacy", "Home");
+                        }
+                        else
+                        {
+                            return RedirectToAction("Index", "Home");
+                        }
                     }
                 }
 

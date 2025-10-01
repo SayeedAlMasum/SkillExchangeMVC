@@ -25,7 +25,7 @@
                     <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
                 </li>
                 <li class="nav-item d-none d-sm-inline-block">
-                    <a asp-controller="Home" asp-action="Index" class="nav-link">Home</a>
+                    <a href="/Home/Index" class="nav-link">Home</a>
                 </li>
             </ul>
 
@@ -203,19 +203,19 @@
                                 <a href="#" class="nav-link">
                                     <i class="nav-icon fas fa-book"></i>
                                     <p>
-                                        Book Management
+                                        Course Management
                                         <i class="right fas fa-angle-left"></i>
                                     </p>
                                 </a>
                                 <ul class="nav nav-treeview">
                                     <li class="nav-item">
-                                        <a href="/BookManagement/CreateBook" class="nav-link">
+                                        <a href="/Course/CreateCourse" class="nav-link">
                                             <i class="far fa-circle nav-icon"></i>
                                             <p>Add</p>
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="/BookManagement/IndexBook" class="nav-link">
+                                        <a href="/Course/IndexCourse" class="nav-link">
                                             <i class="far fa-circle nav-icon"></i>
                                             <p>List</p>
                                         </a>
@@ -228,20 +228,20 @@
                                     <i class="nav-icon fas fa-tags"></i>
 
                                     <p>
-                                        Category Management
+                                        Content Management
 
                                         <i class="right fas fa-angle-left"></i>
                                     </p>
                                 </a>
                                 <ul class="nav nav-treeview">
                                     <li class="nav-item">
-                                        <a href="/Category/CreateCategory" class="nav-link">
+                                        <a href="/Content/UploadContent" class="nav-link">
                                             <i class="far fa-circle nav-icon"></i>
                                             <p>Add</p>
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="/Category/IndexCategory" class="nav-link">
+                                        <a href="/Content/IndexContent" class="nav-link">
                                             <i class="far fa-circle nav-icon"></i>
                                             <p>List</p>
                                         </a>
@@ -269,7 +269,7 @@
                         </div>
                         <div class="col-sm-6">
                             <ol class="breadcrumb float-sm-right">
-                                <li class="breadcrumb-item"><a href="#">Home</a></li>
+                                <a href="/Home/Index" class="nav-link">Home</a>
                             </ol>
                         </div>
                     </div>
