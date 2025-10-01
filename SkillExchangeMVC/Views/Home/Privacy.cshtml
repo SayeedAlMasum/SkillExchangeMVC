@@ -10,7 +10,7 @@
     var totalUsers = _context.UserInfo.Count();
     var totalCourses = _context.Course.Count();
     var totalEnrollments = _context.Enrollments.Count();
-    var pendingRequests = 0; // This would need to be implemented based on your requirements logic
+    var totalQuizzes = _context.Quizzes.Count();
 }
 
 <div class="row">
@@ -57,16 +57,16 @@
     </div>
     <!-- ./col -->
     <div class="col-lg-3 col-6">
-        <!-- Pending Requests -->
+        <!-- Quiz Management -->
         <div class="small-box bg-danger">
             <div class="inner">
-                <h3>@pendingRequests</h3>
-                <p>Pending Requests</p>
+                <h3>@totalQuizzes</h3>
+                <p>Total Quizzes</p>
             </div>
             <div class="icon">
-                <i class="ion ion-pie-graph"></i>
+                <i class="ion ion-clipboard"></i>
             </div>
-            <a href="/Requirement/Index" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            <a href="/Course/IndexCourse" class="small-box-footer">Manage Quizzes <i class="fas fa-arrow-circle-right"></i></a>
         </div>
     </div>
     <!-- ./col -->
@@ -99,6 +99,13 @@
                     <div class="col-md-3 col-sm-6 col-12">
                         <a href="/Content/UploadContent" class="btn btn-app bg-warning">
                             <i class="fas fa-upload"></i> Manage Content
+                        </a>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-3 col-sm-6 col-12">
+                        <a href="/Course/IndexCourse" class="btn btn-app bg-danger">
+                            <i class="fas fa-clipboard-check"></i> Quiz Management
                         </a>
                     </div>
                 </div>

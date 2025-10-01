@@ -1,4 +1,5 @@
 ﻿@* Admin_Layout.cshtml *@
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @inject SkillExchangeMVC.Models.Context.SkillExchangeContext _context
 @using Microsoft.AspNetCore.Identity
 @using System.Security.Claims
@@ -187,20 +188,24 @@
                                     </p>
                                 </a>
                                 <ul class="nav nav-treeview">
+                                    @foreach (var course in _context.Course.ToList())
+                                    {
+                                        <li class="nav-item">
+                                            <a asp-controller="Quiz" asp-action="ListByCourse" asp-route-courseId="@course.CourseId" class="nav-link">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>Create Quiz (@course.Title)</p>
+                                            </a>
+                                        </li>
+                                    }
                                     <li class="nav-item">
-                                        <a href="/Quiz/Create" class="nav-link">
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>Create Quiz</p>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="/Quiz/MyCertificates" class="nav-link">
+                                        <a asp-controller="Quiz" asp-action="MyCertificates" class="nav-link">
                                             <i class="far fa-circle nav-icon"></i>
                                             <p>Certificates</p>
                                         </a>
                                     </li>
                                 </ul>
                             </li>
+
 
                             <!-- Requirements -->
                             <li class="nav-item">
