@@ -1,3 +1,108 @@
 ﻿@{
     Layout = "~/Views/Shared/Admin_Layout.cshtml";
+    ViewData["Title"] = "Dashboard";
 }
+
+@inject SkillExchangeMVC.Models.Context.SkillExchangeContext _context
+
+@{
+    // Get statistics for dashboard cards
+    var totalUsers = _context.UserInfo.Count();
+    var totalCourses = _context.Course.Count();
+    var totalEnrollments = _context.Enrollments.Count();
+    var pendingRequests = 0; // This would need to be implemented based on your requirements logic
+}
+
+<div class="row">
+    <div class="col-lg-3 col-6">
+        <!-- Total Users -->
+        <div class="small-box bg-info">
+            <div class="inner">
+                <h3>@totalUsers</h3>
+                <p>Total Users</p>
+            </div>
+            <div class="icon">
+                <i class="ion ion-bag"></i>
+            </div>
+            <a href="/Register/IndexRegister" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+        </div>
+    </div>
+    <!-- ./col -->
+    <div class="col-lg-3 col-6">
+        <!-- Total Courses -->
+        <div class="small-box bg-success">
+            <div class="inner">
+                <h3>@totalCourses</h3>
+                <p>Total Courses</p>
+            </div>
+            <div class="icon">
+                <i class="ion ion-stats-bars"></i>
+            </div>
+            <a href="/Course/IndexCourse" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+        </div>
+    </div>
+    <!-- ./col -->
+    <div class="col-lg-3 col-6">
+        <!-- Total Enrollments -->
+        <div class="small-box bg-warning">
+            <div class="inner">
+                <h3>@totalEnrollments</h3>
+                <p>Total Enrollments</p>
+            </div>
+            <div class="icon">
+                <i class="ion ion-person-add"></i>
+            </div>
+            <a href="/Course/IndexCourse" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+        </div>
+    </div>
+    <!-- ./col -->
+    <div class="col-lg-3 col-6">
+        <!-- Pending Requests -->
+        <div class="small-box bg-danger">
+            <div class="inner">
+                <h3>@pendingRequests</h3>
+                <p>Pending Requests</p>
+            </div>
+            <div class="icon">
+                <i class="ion ion-pie-graph"></i>
+            </div>
+            <a href="/Requirement/Index" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+        </div>
+    </div>
+    <!-- ./col -->
+</div>
+
+<!-- Quick Actions -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Quick Actions</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 col-sm-6 col-12">
+                        <a href="/Register/IndexRegister" class="btn btn-app bg-primary">
+                            <i class="fas fa-users"></i> Manage Users
+                        </a>
+                    </div>
+                    <div class="col-md-3 col-sm-6 col-12">
+                        <a href="/Course/CreateCourse" class="btn btn-app bg-success">
+                            <i class="fas fa-plus"></i> Create Course
+                        </a>
+                    </div>
+                    <div class="col-md-3 col-sm-6 col-12">
+                        <a href="/Course/IndexCourse" class="btn btn-app bg-info">
+                            <i class="fas fa-book"></i> View Courses
+                        </a>
+                    </div>
+                    <div class="col-md-3 col-sm-6 col-12">
+                        <a href="/Content/UploadContent" class="btn btn-app bg-warning">
+                            <i class="fas fa-upload"></i> Manage Content
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
