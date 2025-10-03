@@ -3,6 +3,11 @@
     var course = ViewBag.Course as SkillExchangeMVC.Models.Course;
     ViewData["Title"] = $"Quizzes - {course?.Title}";
 }
+
+@section styles {
+    <link rel="stylesheet" href="~/Admin/plugins/sweetalert2/sweetalert2.css">
+}
+
 <h2>Quizzes for @course?.Title</h2>
 <p>
     @if (User.IsInRole("Teacher") || User.IsInRole("Admin"))
@@ -17,13 +22,13 @@
             <th>Start</th>
             <th>End</th>
             <th>Type</th>
-            <th></th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
 @foreach (var q in Model)
 {
-    <tr>
+    <tr id="quiz-row-@q.QuizId">
         <td>@q.Title</td>
         <td>@q.StartTime</td>
         <td>@q.EndTime</td>
@@ -33,6 +38,9 @@
             @if (User.IsInRole("Teacher") || User.IsInRole("Admin"))
             {
                 <a class="btn btn-sm btn-outline-primary" asp-controller="QuizQuestion" asp-action="Manage" asp-route-quizId="@q.QuizId">Manage Questions</a>
+                <button class="btn btn-sm btn-danger delete-quiz-btn" data-quiz-id="@q.QuizId" data-quiz-title="@q.Title">
+                    <i class="fas fa-trash"></i> Delete
+                </button>
             }
             @if (User.IsInRole("Student") || User.IsInRole("Admin"))
             {
@@ -43,3 +51,76 @@
 }
     </tbody>
 </table>
+
+@if (User.IsInRole("Teacher") || User.IsInRole("Admin"))
+{
+    @section scripts {
+        <script src="~/Admin/plugins/sweetalert2/sweetalert2.all.js"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Handle delete quiz buttons
+                document.querySelectorAll('.delete-quiz-btn').forEach(function(button) {
+                    button.addEventListener('click', function() {
+                        const quizId = this.getAttribute('data-quiz-id');
+                        const quizTitle = this.getAttribute('data-quiz-title');
+                        
+                        Swal.fire({
+                            title: 'Are you sure?',
+                            html: `You want to delete the quiz "<strong>${quizTitle}</strong>"?<br><br><small class="text-warning">This action cannot be undone and will delete all related questions, options, attempts, and responses.</small>`,
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#dc3545',
+                            cancelButtonColor: '#6c757d',
+                            confirmButtonText: '<i class="fas fa-trash"></i> Yes, delete it!',
+                            cancelButtonText: '<i class="fas fa-times"></i> Cancel',
+                            focusCancel: true,
+                            showLoaderOnConfirm: true,
+                            preConfirm: function() {
+                                return fetch('@Url.Action("DeleteQuiz", "Quiz")', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/x-www-form-urlencoded',
+                                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value || ''
+                                    },
+                                    body: 'id=' + encodeURIComponent(quizId)
+                                })
+                                .then(response => {
+                                    if (!response.ok) {
+                                        throw new Error('Network response was not ok');
+                                    }
+                                    return response.json();
+                                })
+                                .then(data => {
+                                    if (!data.success) {
+                                        throw new Error(data.message || 'Unknown error occurred');
+                                    }
+                                    return data;
+                                })
+                                .catch(error => {
+                                    Swal.showValidationMessage(`Request failed: ${error.message}`);
+                                });
+                            },
+                            allowOutsideClick: () => !Swal.isLoading()
+                        }).then((result) => {
+                            if (result.isConfirmed && result.value) {
+                                // Remove the row from the table
+                                const row = document.getElementById('quiz-row-' + quizId);
+                                if (row) {
+                                    row.remove();
+                                }
+                                
+                                Swal.fire({
+                                    title: 'Deleted!',
+                                    text: result.value.message,
+                                    icon: 'success',
+                                    timer: 3000,
+                                    showConfirmButton: false
+                                });
+                            }
+                        });
+                    });
+                });
+            });
+        </script>
+    }
+}

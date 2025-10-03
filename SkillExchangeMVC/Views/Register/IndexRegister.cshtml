@@ -8,6 +8,22 @@
 <div class="container mt-5">
     <h2 class="text-center mb-4">All Registered Users</h2>
 
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
     <table id="userTable" class="table table-bordered table-striped">
         <thead class="table">
             <tr>
@@ -23,13 +39,18 @@
                 int count = 1;
                 foreach (var user in Model)
                 {
-                    <tr>
+                    <tr id="user-row-@user.UserInfoId">
                         <td>@count</td>
                         <td>@user.Name</td>
                         <td>@user.Email</td>
                         <td>@user.Role</td>
                         <td>
-                        <button class= "btn btn-danger btn-sm delete-user" data-userid="@user.UserInfoId" data-username="@user.Name">Delete</button>
+                            <button class="btn btn-danger btn-sm delete-user" 
+                                    data-userid="@user.UserInfoId" 
+                                    data-username="@user.Name"
+                                    onclick="deleteUser('@user.UserInfoId', '@user.Name')">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
                         </td>
                     </tr>
                     count++;
@@ -38,52 +59,168 @@
         </tbody>
     </table>
 </div>
+
 @section Scripts {
- 
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
     <script>
-        document.querySelectorAll('.delete-user').forEach(button => {
-            button.addEventListener('click', function () {
-                const userId = this.getAttribute('data-userid');
-                const username = this.getAttribute('data-username');
+        function deleteUser(userId, username) {
+            console.log('Delete function called for user:', userId, username);
 
-                Swal.fire({
-                    title: 'Are you sure?',
-                    text: `Do you want to delete user "${username}"?`,
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#3085d6',
-                    confirmButtonText: 'Yes, delete it!'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                               const formData = new FormData();
-        formData.append("id", userId);
+            // Show SweetAlert confirmation dialog
+            Swal.fire({
+                title: 'Are you sure?',
+                text: `Do you want to delete user "${username}"? This action cannot be undone!`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'Cancel',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    console.log('User confirmed deletion');
 
-        fetch('/Register/DeleteUser', {
-            method: 'POST',
-            body: formData
-        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                       Swal.fire('Deleted!', data.message, 'success').then(() => {
-            const row = button.closest('tr');
-            row.remove();
-        });
-                            } else {
-                                Swal.fire('Error!', 'Something went wrong.', 'error');
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            Swal.fire('Error!', 'Could not delete the user.', 'error');
+                    // Show loading state
+                    Swal.fire({
+                        title: 'Deleting...',
+                        text: 'Please wait while we delete the user.',
+                        icon: 'info',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        showConfirmButton: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    // Create form data
+                    const formData = new FormData();
+                    formData.append("id", userId);
+
+                    console.log('Sending request to /Register/DeleteUser with userId:', userId);
+
+                    // Send AJAX request
+                    fetch('/Register/DeleteUser', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => {
+                        console.log('Response received:', response);
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Response data:', data);
+                        if (data.success) {
+                            // Show success message
+                            Swal.fire({
+                                title: 'Deleted!',
+                                text: data.message || 'User has been deleted successfully.',
+                                icon: 'success',
+                                confirmButtonColor: '#28a745',
+                                timer: 2000,
+                                timerProgressBar: true
+                            }).then(() => {
+                                // Remove the row from the table
+                                const row = document.getElementById(`user-row-${userId}`);
+                                if (row) {
+                                    // Add fade out animation
+                                    row.style.transition = 'opacity 0.5s';
+                                    row.style.opacity = '0';
+                                    setTimeout(() => {
+                                        row.remove();
+                                        
+                                        // Refresh DataTable if it exists
+                                        if (typeof $('#userTable').DataTable === 'function') {
+                                            $('#userTable').DataTable().draw();
+                                        }
+                                    }, 500);
+                                }
+                            });
+                        } else {
+                            // Show error message
+                            Swal.fire({
+                                title: 'Error!',
+                                text: data.message || 'Something went wrong while deleting the user.',
+                                icon: 'error',
+                                confirmButtonColor: '#dc3545'
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        // Show network error message
+                        Swal.fire({
+                            title: 'Network Error!',
+                            text: 'Could not delete the user. Please check your connection and try again.',
+                            icon: 'error',
+                            confirmButtonColor: '#dc3545',
+                            footer: `<small>Error details: ${error.message}</small>`
                         });
+                    });
+                }
+            });
+        }
+
+        // Initialize DataTables if available
+        $(document).ready(function() {
+            if (typeof $.fn.DataTable !== 'undefined') {
+                $('#userTable').DataTable({
+                    "responsive": true,
+                    "lengthChange": false,
+                    "autoWidth": false,
+                    "pageLength": 10,
+                    "ordering": true,
+                    "info": true,
+                    "searching": true,
+                    "language": {
+                        "search": "Search users:",
+                        "lengthMenu": "Show _MENU_ users per page",
+                        "info": "Showing _START_ to _END_ of _TOTAL_ users",
+                        "paginate": {
+                            "first": "First",
+                            "last": "Last",
+                            "next": "Next",
+                            "previous": "Previous"
+                        }
                     }
                 });
-            });
-        });
+            }
 
-        // Initialize DataTables (if you're using it)
-        const table = new DataTable('#userTable');
+            // Show SweetAlert for TempData messages
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <text>
+                Swal.fire({
+                    title: 'Success!',
+                    text: '@TempData["SuccessMessage"]',
+                    icon: 'success',
+                    confirmButtonColor: '#28a745',
+                    timer: 3000,
+                    timerProgressBar: true
+                });
+                </text>
+            }
+
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <text>
+                Swal.fire({
+                    title: 'Error!',
+                    text: '@TempData["ErrorMessage"]',
+                    icon: 'error',
+                    confirmButtonColor: '#dc3545'
+                });
+                </text>
+            }
+        });
     </script>
 }

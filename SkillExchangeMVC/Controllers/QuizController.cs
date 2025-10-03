@@ -7,6 +7,7 @@ using SkillExchangeMVC.Models.Context;
 using System.Security.Claims;
 using System.Linq;
 using SkiaSharp;
+using Microsoft.EntityFrameworkCore;
 
 namespace SkillExchangeMVC.Controllers
 {
@@ -71,6 +72,99 @@ namespace SkillExchangeMVC.Controllers
             ViewBag.Course = course;
             var list = _db.Quizzes.Where(q => q.CourseId == courseId).OrderByDescending(q => q.StartTime).ToList();
             return View("ListByCourse", list);
+        }
+
+        // Delete quiz functionality
+        [Authorize(Roles = "Teacher,Admin")]
+        [HttpPost]
+        public IActionResult DeleteQuiz(int id)
+        {
+            try
+            {
+                var quiz = _db.Quizzes.Find(id);
+                if (quiz == null)
+                {
+                    return Json(new { success = false, message = "Quiz not found." });
+                }
+
+                // Check if user has permission to delete this quiz
+                var email = User.FindFirstValue(ClaimTypes.Email);
+                var teacherId = _db.UserInfo.FirstOrDefault(u => u.Email == email)?.UserInfoId;
+                var course = _db.Course.FirstOrDefault(c => c.CourseId == quiz.CourseId);
+                
+                if (course == null)
+                {
+                    return Json(new { success = false, message = "Associated course not found." });
+                }
+
+                // Only the teacher who owns the course or admin can delete
+                if (User.IsInRole("Teacher") && !User.IsInRole("Admin") && course.TeacherId != teacherId)
+                {
+                    return Json(new { success = false, message = "You don't have permission to delete this quiz." });
+                }
+
+                try
+                {
+                    // Delete related records manually to handle cascade delete
+                    // Remove quiz responses first
+                    var quizAttempts = _db.QuizAttempts.Where(qa => qa.QuizId == id).ToList();
+                    if (quizAttempts.Any())
+                    {
+                        var attemptIds = quizAttempts.Select(qa => qa.QuizAttemptId).ToList();
+                        var quizResponses = _db.QuizResponses.Where(qr => attemptIds.Contains(qr.QuizAttemptId)).ToList();
+                        if (quizResponses.Any())
+                        {
+                            _db.QuizResponses.RemoveRange(quizResponses);
+                        }
+                        
+                        // Remove quiz attempts
+                        _db.QuizAttempts.RemoveRange(quizAttempts);
+                    }
+
+                    // Remove quiz options
+                    var quizQuestions = _db.QuizQuestions.Where(qq => qq.QuizId == id).ToList();
+                    if (quizQuestions.Any())
+                    {
+                        var questionIds = quizQuestions.Select(qq => qq.QuizQuestionId).ToList();
+                        var quizOptions = _db.QuizOptions.Where(qo => questionIds.Contains(qo.QuizQuestionId)).ToList();
+                        if (quizOptions.Any())
+                        {
+                            _db.QuizOptions.RemoveRange(quizOptions);
+                        }
+                        
+                        // Remove quiz questions
+                        _db.QuizQuestions.RemoveRange(quizQuestions);
+                    }
+
+                    // Remove certificates related to this quiz if it's an exam
+                    if (quiz.IsExam)
+                    {
+                        var certificates = _db.Certificates.Where(c => c.CourseId == quiz.CourseId).ToList();
+                        if (certificates.Any())
+                        {
+                            _db.Certificates.RemoveRange(certificates);
+                        }
+                    }
+
+                    // Finally remove the quiz
+                    _db.Quizzes.Remove(quiz);
+                    _db.SaveChanges();
+                    
+                    return Json(new { success = true, message = "Quiz deleted successfully!" });
+                }
+                catch (DbUpdateException ex)
+                {
+                    // Log the specific database exception
+                    System.Diagnostics.Debug.WriteLine($"Database error deleting quiz: {ex.Message}");
+                    return Json(new { success = false, message = $"Database error: {ex.InnerException?.Message ?? ex.Message}" });
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log the exception for debugging
+                System.Diagnostics.Debug.WriteLine($"Error deleting quiz: {ex.Message}");
+                return Json(new { success = false, message = $"An error occurred: {ex.Message}" });
+            }
         }
 
         // Students take quiz in window (admins allowed for testing)
