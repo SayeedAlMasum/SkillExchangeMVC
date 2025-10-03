@@ -208,6 +208,14 @@ namespace SkillExchangeMVC.Controllers
         {
             var course = _skillExchangeContext.Course.FirstOrDefault(c => c.CourseId == id);
             if (course == null) return NotFound();
+            
+            // For free courses, directly enroll and redirect to content
+            if (!course.IsPremium || course.Price == 0)
+            {
+                return AdminEnrollWithoutPayment(id);
+            }
+            
+            // For premium courses, show enrollment options
             return View("AdminEnrollOptions", course);
         }
 
