@@ -1,43 +1,160 @@
-﻿@* IndexContent.cshtml *@
+﻿@using System.Security.Claims
+@* IndexContent.cshtml *@
 @model List<SkillExchangeMVC.Models.Content>
 
 @{
-    ViewData["Title"] = "Manage Uploaded Content";
+    ViewData["Title"] = User.IsInRole("Admin") ? "Manage All Content" : "Manage Your Uploaded Content";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Manage Your Uploaded Content</h2>
+<div class="container-fluid">
+    @Html.AntiForgeryToken()
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>
+            @if (User.IsInRole("Admin"))
+            {
+                <text><i class="fas fa-folder-open"></i> Manage All Content</text>
+            }
+            else
+            {
+                <text><i class="fas fa-upload"></i> Manage Your Uploaded Content</text>
+            }
+        </h2>
+        <a asp-action="UploadContent" class="btn btn-success">
+            <i class="fas fa-plus"></i> Upload New Content
+        </a>
+    </div>
 
-<table id="contentTable" class="table table-bordered table-striped">
-    <thead>
-        <tr>
-            <th>Title</th>
-            <th>Description</th>
-            <th>Type</th>
-            <th>URL</th>
-            <th>Course</th>
-            <th>Created</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.Title</td>
-                <td>@item.Description</td>
-                <td>@item.Type</td>
-                <td><a href="@item.URL" target="_blank">View</a></td>
-                <td>@item.CourseId</td>
-                <td>@item.CreatedDate.ToString("g")</td>
-                <td>
-                    <a asp-action="EditContent" asp-route-id="@item.ContentId" class="btn btn-warning btn-sm">Edit</a>
-                    <button class="btn btn-danger btn-sm" onclick="deleteContent(@item.ContentId)">Delete</button>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (Model.Any())
+    {
+        <div class="card">
+            <div class="card-body">
+                <table id="contentTable" class="table table-bordered table-striped">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Title</th>
+                            <th>Description</th>
+                            <th>Type</th>
+                            <th>Course</th>
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <th>Uploaded By</th>
+                            }
+                            <th>Created</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <strong>@item.Title</strong>
+                                </td>
+                                <td>@item.Description</td>
+                                <td>
+                                    @if (item.Type == "PDF")
+                                    {
+                                        <span class="badge bg-danger"><i class="fas fa-file-pdf"></i> @item.Type</span>
+                                    }
+                                    else if (item.Type == "Video")
+                                    {
+                                        <span class="badge bg-primary"><i class="fas fa-video"></i> @item.Type</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-success"><i class="fas fa-link"></i> @item.Type</span>
+                                    }
+                                </td>
+                                <td>
+                                    @{
+                                        var courses = ViewBag.Courses as Dictionary<int, string>;
+                                        var courseTitle = courses?.ContainsKey(item.CourseId) == true ? courses[item.CourseId] : null;
+                                    }
+                                    @if (courseTitle != null)
+                                    {
+                                        <span class="badge bg-info">@courseTitle</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Course ID: @item.CourseId</span>
+                                    }
+                                </td>
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <td>
+                                        <small class="text-muted">
+                                            <i class="fas fa-user"></i> @item.UploaderEmail
+                                            <br>
+                                            <i class="fas fa-signature"></i> @item.CreatedBy
+                                        </small>
+                                    </td>
+                                }
+                                <td>
+                                    <small>@item.CreatedDate.ToString("g")</small>
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        @if (item.Type == "Link")
+                                        {
+                                            <a href="@item.URL" target="_blank" class="btn btn-primary btn-sm" title="Open Link">
+                                                <i class="fas fa-external-link-alt"></i>
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <a href="@Url.Action("DownloadContent", "Content", new { contentId = item.ContentId })" class="btn btn-success btn-sm" title="Download">
+                                                <i class="fas fa-download"></i>
+                                            </a>
+                                        }
+                                        
+                                        @if (User.IsInRole("Admin") || item.UploaderEmail == User.FindFirstValue(System.Security.Claims.ClaimTypes.Email))
+                                        {
+                                            <a asp-action="EditContent" asp-route-id="@item.ContentId" class="btn btn-warning btn-sm" title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <button class="btn btn-danger btn-sm" onclick="deleteContent(@item.ContentId)" title="Delete">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info text-center">
+            <i class="fas fa-info-circle fa-2x mb-3"></i>
+            <h4>No Content Found</h4>
+            <p>
+                @if (User.IsInRole("Admin"))
+                {
+                    <text>No content has been uploaded by any user yet.</text>
+                }
+                else
+                {
+                    <text>You haven't uploaded any content yet.</text>
+                }
+            </p>
+            <a asp-action="UploadContent" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Upload Your First Content
+            </a>
+        </div>
+    }
+</div>
 
 @section Scripts {
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
@@ -46,7 +163,14 @@
 
     <script>
         $(document).ready(function () {
-            $('#contentTable').DataTable();
+            $('#contentTable').DataTable({
+                responsive: true,
+                pageLength: 10,
+                order: [[5, 'desc']], // Sort by created date descending
+                columnDefs: [
+                    { orderable: false, targets: [-1] } // Disable sorting for Actions column
+                ]
+            });
         });
 
         function deleteContent(id) {
@@ -55,20 +179,54 @@
                 text: 'You will not be able to recover this content!',
                 icon: 'warning',
                 showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
                 confirmButtonText: 'Yes, delete it!',
                 cancelButtonText: 'Cancel'
             }).then((result) => {
                 if (result.isConfirmed) {
+                    // Show loading
+                    Swal.fire({
+                        title: 'Deleting...',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        showConfirmButton: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
                     $.ajax({
-                        url: '/Content/DeleteContent/' + id,
+                        url: '@Url.Action("DeleteContent", "Content")',
                         type: 'POST',
+                        data: { id: id },
+                        headers: {
+                            'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                        },
                         success: function (res) {
                             if (res.success) {
-                                Swal.fire('Deleted!', res.message, 'success')
-                                    .then(() => location.reload());
+                                Swal.fire({
+                                    title: 'Deleted!',
+                                    text: res.message,
+                                    icon: 'success',
+                                    confirmButtonText: 'OK'
+                                }).then(() => location.reload());
                             } else {
-                                Swal.fire('Error!', res.message, 'error');
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: res.message,
+                                    icon: 'error',
+                                    confirmButtonText: 'OK'
+                                });
                             }
+                        },
+                        error: function () {
+                            Swal.fire({
+                                title: 'Error!',
+                                text: 'An error occurred while deleting the content.',
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            });
                         }
                     });
                 }

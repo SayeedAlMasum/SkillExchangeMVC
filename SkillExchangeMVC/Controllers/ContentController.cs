@@ -25,11 +25,32 @@ namespace SkillExchangeMVC.Controllers
         public IActionResult IndexContent()
         {
             var email = User.FindFirstValue(ClaimTypes.Email);
+            List<Content> contents;
 
-            var contents = _skillExchangeContext.Content
-                .Where(c => c.UploaderEmail == email)
-                .OrderByDescending(c => c.CreatedDate)
-                .ToList();
+            if (User.IsInRole("Admin"))
+            {
+                // Admin can see all content from all users
+                contents = _skillExchangeContext.Content
+                    .OrderByDescending(c => c.CreatedDate)
+                    .ToList();
+            }
+            else
+            {
+                // Teachers can only see their own uploaded content
+                contents = _skillExchangeContext.Content
+                    .Where(c => c.UploaderEmail == email)
+                    .OrderByDescending(c => c.CreatedDate)
+                    .ToList();
+            }
+
+            // Get course information for display
+            var courseIds = contents.Select(c => c.CourseId).Distinct().ToList();
+            var courses = _skillExchangeContext.Course
+                .Where(c => courseIds.Contains(c.CourseId))
+                .ToDictionary(c => c.CourseId, c => c.Title);
+            
+            ViewBag.Courses = courses;
+
             return View(contents);
         }
 
