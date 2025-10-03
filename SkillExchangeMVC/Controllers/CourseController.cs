@@ -181,24 +181,50 @@ namespace SkillExchangeMVC.Controllers
             var course = _skillExchangeContext.Course.FirstOrDefault(c => c.CourseId == id);
             if (course == null) return NotFound();
 
-            // Check if course has a price and user needs to pay
-            if (course.Price > 0 && !User.IsInRole("Admin"))
+            // For free courses, enroll directly and redirect to content
+            if (!course.IsPremium || course.Price == 0)
             {
-                // Redirect to payment page for paid courses
-                return RedirectToAction("CreatePayment", "Payment", new { courseId = id });
+                var exists = _skillExchangeContext.Enrollments.Any(e => e.CourseId == id && e.UserInfoId == studentId);
+                if (!exists)
+                {
+                    _skillExchangeContext.Enrollments.Add(new Enrollment
+                    {
+                        CourseId = id,
+                        UserInfoId = studentId
+                    });
+                    _skillExchangeContext.SaveChanges();
+                }
+                // Redirect to course content for free courses
+                return RedirectToAction("CourseContents", "Content", new { courseId = id });
             }
 
-            var exists = _skillExchangeContext.Enrollments.Any(e => e.CourseId == id && e.UserInfoId == studentId);
-            if (!exists)
+            // For premium courses, check if user is Admin
+            if (course.IsPremium && course.Price > 0)
             {
-                _skillExchangeContext.Enrollments.Add(new Enrollment
+                if (User.IsInRole("Admin"))
                 {
-                    CourseId = id,
-                    UserInfoId = studentId
-                });
-                _skillExchangeContext.SaveChanges();
+                    // Admin can access premium courses for free
+                    var exists = _skillExchangeContext.Enrollments.Any(e => e.CourseId == id && e.UserInfoId == studentId);
+                    if (!exists)
+                    {
+                        _skillExchangeContext.Enrollments.Add(new Enrollment
+                        {
+                            CourseId = id,
+                            UserInfoId = studentId
+                        });
+                        _skillExchangeContext.SaveChanges();
+                    }
+                    return RedirectToAction("CourseContents", "Content", new { courseId = id });
+                }
+                else
+                {
+                    // Students need to pay for premium courses
+                    return RedirectToAction("CreatePayment", "Payment", new { courseId = id });
+                }
             }
-            TempData["Success"] = "Enrolled successfully.";
+
+            // Default fallback (shouldn't reach here)
+            TempData["Error"] = "Unable to process enrollment. Please try again.";
             return RedirectToAction("IndexCourse");
         }
 
@@ -267,6 +293,64 @@ namespace SkillExchangeMVC.Controllers
                 message = $"Price updated from ৳{oldPrice} to ৳{course.Price}",
                 newPrice = course.Price
             });
+        }
+
+        // Teacher enroll action - similar to student but for teachers
+        [Authorize(Roles = "Teacher,Admin")]
+        [HttpPost]
+        public IActionResult TeacherEnroll(int id)
+        {
+            var email = User.FindFirstValue(ClaimTypes.Email);
+            var teacherId = _skillExchangeContext.UserInfo.FirstOrDefault(u => u.Email == email)?.UserInfoId;
+            if (teacherId == null) return Unauthorized();
+            var course = _skillExchangeContext.Course.FirstOrDefault(c => c.CourseId == id);
+            if (course == null) return NotFound();
+
+            // For free courses, enroll directly and redirect to content
+            if (!course.IsPremium || course.Price == 0)
+            {
+                var exists = _skillExchangeContext.Enrollments.Any(e => e.CourseId == id && e.UserInfoId == teacherId);
+                if (!exists)
+                {
+                    _skillExchangeContext.Enrollments.Add(new Enrollment
+                    {
+                        CourseId = id,
+                        UserInfoId = teacherId
+                    });
+                    _skillExchangeContext.SaveChanges();
+                }
+                // Redirect to course content for free courses
+                return RedirectToAction("CourseContents", "Content", new { courseId = id });
+            }
+
+            // For premium courses, check if user is Admin
+            if (course.IsPremium && course.Price > 0)
+            {
+                if (User.IsInRole("Admin"))
+                {
+                    // Admin can access premium courses for free
+                    var exists = _skillExchangeContext.Enrollments.Any(e => e.CourseId == id && e.UserInfoId == teacherId);
+                    if (!exists)
+                    {
+                        _skillExchangeContext.Enrollments.Add(new Enrollment
+                        {
+                            CourseId = id,
+                            UserInfoId = teacherId
+                        });
+                        _skillExchangeContext.SaveChanges();
+                    }
+                    return RedirectToAction("CourseContents", "Content", new { courseId = id });
+                }
+                else
+                {
+                    // Teachers need to pay for premium courses
+                    return RedirectToAction("CreatePayment", "Payment", new { courseId = id });
+                }
+            }
+
+            // Default fallback (shouldn't reach here)
+            TempData["Error"] = "Unable to process enrollment. Please try again.";
+            return RedirectToAction("IndexCourse");
         }
     }
 }

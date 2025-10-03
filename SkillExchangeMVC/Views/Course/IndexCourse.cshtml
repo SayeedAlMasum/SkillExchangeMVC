@@ -93,10 +93,29 @@
                                 }
                                 else if (User.IsInRole("Teacher"))
                                 {
-                                    <a asp-controller="Quiz" asp-action="ListByCourse" asp-route-courseId="@item.CourseId" 
-                                       class="btn btn-outline-primary btn-sm w-100">
-                                        <i class="fas fa-question-circle"></i> Manage Quizzes
-                                    </a>
+                                    <div class="d-grid gap-2">
+                                        @if (item.Price == null || item.Price == 0)
+                                        {
+                                            <!-- Free Course for Teachers -->
+                                            <form method="post" asp-controller="Course" asp-action="TeacherEnroll" asp-route-id="@item.CourseId">
+                                                <button type="submit" class="btn btn-success w-100">
+                                                    <i class="fas fa-play"></i> Access Free Course
+                                                </button>
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <!-- Paid Course for Teachers -->
+                                            <a asp-controller="Payment" asp-action="CreatePayment" asp-route-courseId="@item.CourseId" 
+                                               class="btn btn-primary w-100">
+                                                <i class="fas fa-credit-card"></i> Enroll Now - ৳@item.Price
+                                            </a>
+                                        }
+                                        <a asp-controller="Quiz" asp-action="ListByCourse" asp-route-courseId="@item.CourseId" 
+                                           class="btn btn-outline-primary btn-sm">
+                                            <i class="fas fa-question-circle"></i> Manage Quizzes
+                                        </a>
+                                    </div>
                                 }
                                 else if (User.IsInRole("Student"))
                                 {
