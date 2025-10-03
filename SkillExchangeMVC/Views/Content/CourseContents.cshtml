@@ -1,3 +1,4 @@
+@using System.Security.Claims
 @model IEnumerable<SkillExchangeMVC.Models.Content>
 @{
     var course = ViewBag.Course as SkillExchangeMVC.Models.Course;
@@ -5,6 +6,7 @@
 }
 
 <div class="container">
+    @Html.AntiForgeryToken()
     <div class="row">
         <div class="col-md-12">
             <h2>Contents - @course?.Title</h2>
@@ -302,18 +304,28 @@
                                         </td>
                                         <td>@c.Description</td>
                                         <td>
-                                            @if (c.Type == "Link") 
-                                            {
-                                                <a href="@c.URL" target="_blank" class="btn btn-primary btn-sm">
-                                                    <i class="fas fa-external-link-alt"></i> Open Link
-                                                </a>
-                                            } 
-                                            else 
-                                            {
-                                                <a href="@c.URL" target="_blank" class="btn btn-success btn-sm">
-                                                    <i class="fas fa-eye"></i> View
-                                                </a>
-                                            }
+                                            <div class="btn-group" role="group">
+                                                @if (c.Type == "Link") 
+                                                {
+                                                    <a href="@Url.Action("DownloadContent", "Content", new { contentId = c.ContentId })" target="_blank" class="btn btn-primary btn-sm">
+                                                        <i class="fas fa-external-link-alt"></i> Open Link
+                                                    </a>
+                                                } 
+                                                else 
+                                                {
+                                                    <a href="@Url.Action("DownloadContent", "Content", new { contentId = c.ContentId })" class="btn btn-success btn-sm" download>
+                                                        <i class="fas fa-download"></i> Download
+                                                    </a>
+                                                }
+                                                
+                                                @* Show delete button only for Admin or if user uploaded the content *@
+                                                @if (User.IsInRole("Admin") || (User.IsInRole("Teacher") && c.UploaderEmail == User.FindFirstValue(System.Security.Claims.ClaimTypes.Email)))
+                                                {
+                                                    <button type="button" class="btn btn-danger btn-sm" onclick="deleteCourseContent(@c.ContentId, '@c.Title')">
+                                                        <i class="fas fa-trash"></i> Delete
+                                                    </button>
+                                                }
+                                            </div>
                                         </td>
                                     </tr>
                                 }
@@ -339,3 +351,73 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function deleteCourseContent(contentId, contentTitle) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: `You are about to delete "${contentTitle}". This action cannot be undone!`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Show loading state
+                    Swal.fire({
+                        title: 'Deleting...',
+                        text: 'Please wait while we delete the content.',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        showConfirmButton: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    // Perform the delete operation
+                    $.ajax({
+                        url: '@Url.Action("DeleteCourseContent", "Content")',
+                        type: 'POST',
+                        data: { contentId: contentId },
+                        headers: {
+                            'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                Swal.fire({
+                                    title: 'Deleted!',
+                                    text: response.message,
+                                    icon: 'success',
+                                    confirmButtonText: 'OK'
+                                }).then(() => {
+                                    // Reload the page to refresh the content list
+                                    location.reload();
+                                });
+                            } else {
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: response.message,
+                                    icon: 'error',
+                                    confirmButtonText: 'OK'
+                                });
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            Swal.fire({
+                                title: 'Error!',
+                                text: 'An error occurred while deleting the content. Please try again.',
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            });
+                        }
+                    });
+                }
+            });
+        }
+    </script>
+}
