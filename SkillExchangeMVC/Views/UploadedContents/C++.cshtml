@@ -1,0 +1,206 @@
+@{
+    ViewData["Title"] = "C++ Programming";
+    var course = ViewBag.Course as SkillExchangeMVC.Models.Course;
+    var courseId = ViewBag.CourseId as int?;
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <!-- Course Navigation -->
+            @if (course != null)
+            {
+                <nav aria-label="breadcrumb" class="mb-4">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="@Url.Action("IndexCourse", "Course")">Courses</a></li>
+                        <li class="breadcrumb-item"><a href="@Url.Action("CourseContents", "Content", new { courseId = course.CourseId })">@course.Title</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">C++ Programming</li>
+                    </ol>
+                </nav>
+                
+                <div class="alert alert-info">
+                    <strong>Course:</strong> @course.Title <br>
+                    <strong>Category:</strong> @course.Category - @course.SubCategory
+                </div>
+            }
+
+            <h2>C++ Programming</h2>
+            <p>This page contains content related to C++ Programming.</p>
+            
+            <div class="content-section">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>C++ Programming Fundamentals</h4>
+                    </div>
+                    <div class="card-body">
+                        <h5>Introduction to C++</h5>
+                        <p>C++ is a general-purpose programming language that supports both procedural and object-oriented programming paradigms. It's an extension of the C programming language.</p>
+                        
+                        <h5>Key Features</h5>
+                        <ul>
+                            <li><strong>Object-Oriented:</strong> Supports classes, objects, inheritance, polymorphism</li>
+                            <li><strong>Low-level Control:</strong> Direct memory management with pointers</li>
+                            <li><strong>Performance:</strong> Compiled language with excellent performance</li>
+                            <li><strong>Standard Library:</strong> Rich set of built-in functions and data structures</li>
+                            <li><strong>Generic Programming:</strong> Templates for code reusability</li>
+                        </ul>
+
+                        <h5>Basic Program Structure</h5>
+                        <pre class="bg-light p-3">
+<code>#include &lt;iostream&gt;
+using namespace std;
+
+int main() {
+    cout &lt;&lt; "Hello, World!" &lt;&lt; endl;
+    return 0;
+}</code>
+                        </pre>
+
+                        <h5>Data Types and Variables</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6>Basic Data Types</h6>
+                                <pre class="bg-light p-3">
+<code>int age = 25;              // Integer
+float height = 5.9f;        // Float
+double salary = 50000.50;   // Double
+char grade = 'A';           // Character
+bool isStudent = true;      // Boolean
+string name = "John";       // String</code>
+                                </pre>
+                            </div>
+                            <div class="col-md-6">
+                                <h6>Pointers and References</h6>
+                                <pre class="bg-light p-3">
+<code>int x = 10;
+int* ptr = &x;      // Pointer to x
+int& ref = x;       // Reference to x
+
+cout &lt;&lt; *ptr;       // Dereference pointer
+cout &lt;&lt; ref;        // Access reference</code>
+                                </pre>
+                            </div>
+                        </div>
+
+                        <h5>Classes and Objects</h5>
+                        <pre class="bg-light p-3">
+<code>class Rectangle {
+private:
+    double width, height;
+    
+public:
+    // Constructor
+    Rectangle(double w, double h) : width(w), height(h) {}
+    
+    // Member functions
+    double getArea() {
+        return width * height;
+    }
+    
+    double getPerimeter() {
+        return 2 * (width + height);
+    }
+    
+    // Getters and Setters
+    void setWidth(double w) { width = w; }
+    void setHeight(double h) { height = h; }
+    double getWidth() const { return width; }
+    double getHeight() const { return height; }
+};
+
+// Using the class
+Rectangle rect(10.0, 5.0);
+cout &lt;&lt; "Area: " &lt;&lt; rect.getArea() &lt;&lt; endl;</code>
+                        </pre>
+
+                        <h5>Memory Management</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6>Dynamic Memory Allocation</h6>
+                                <pre class="bg-light p-3">
+<code>// Allocate memory
+int* arr = new int[10];
+
+// Use the memory
+for(int i = 0; i < 10; i++) {
+    arr[i] = i * 2;
+}
+
+// Free the memory
+delete[] arr;</code>
+                                </pre>
+                            </div>
+                            <div class="col-md-6">
+                                <h6>Smart Pointers (C++11+)</h6>
+                                <pre class="bg-light p-3">
+<code>#include &lt;memory&gt;
+
+// Unique pointer
+std::unique_ptr&lt;int&gt; ptr1 = 
+    std::make_unique&lt;int&gt;(42);
+
+// Shared pointer
+std::shared_ptr&lt;int&gt; ptr2 = 
+    std::make_shared&lt;int&gt;(42);</code>
+                                </pre>
+                            </div>
+                        </div>
+
+                        <h5>Templates</h5>
+                        <pre class="bg-light p-3">
+<code>template&lt;typename T&gt;
+class Stack {
+private:
+    T* arr;
+    int top;
+    int capacity;
+    
+public:
+    Stack(int size) : capacity(size), top(-1) {
+        arr = new T[capacity];
+    }
+    
+    ~Stack() {
+        delete[] arr;
+    }
+    
+    void push(T item) {
+        if(top < capacity - 1) {
+            arr[++top] = item;
+        }
+    }
+    
+    T pop() {
+        if(top >= 0) {
+            return arr[top--];
+        }
+        throw std::runtime_error("Stack is empty");
+    }
+};
+
+// Usage
+Stack&lt;int&gt; intStack(10);
+Stack&lt;string&gt; stringStack(10);</code>
+                        </pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation buttons -->
+            <div class="mt-4">
+                @if (course != null)
+                {
+                    <a href="@Url.Action("Java", "UploadedContents", new { courseId = course.CourseId })" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Previous: Java
+                    </a>
+                    <a href="@Url.Action("CourseContents", "Content", new { courseId = course.CourseId })" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to Course Contents
+                    </a>
+                    <a href="@Url.Action("Graphics", "UploadedContents", new { courseId = course.CourseId })" class="btn btn-primary">
+                        Next: Graphics <i class="fas fa-arrow-right"></i>
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
+</div>

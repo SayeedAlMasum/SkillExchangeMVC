@@ -1,0 +1,221 @@
+@{
+    ViewData["Title"] = "Video Editing";
+    var course = ViewBag.Course as SkillExchangeMVC.Models.Course;
+    var courseId = ViewBag.CourseId as int?;
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <!-- Course Navigation -->
+            @if (course != null)
+            {
+                <nav aria-label="breadcrumb" class="mb-4">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="@Url.Action("IndexCourse", "Course")">Courses</a></li>
+                        <li class="breadcrumb-item"><a href="@Url.Action("CourseContents", "Content", new { courseId = course.CourseId })">@course.Title</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Video Editing</li>
+                    </ol>
+                </nav>
+                
+                <div class="alert alert-info">
+                    <strong>Course:</strong> @course.Title <br>
+                    <strong>Category:</strong> @course.Category - @course.SubCategory
+                </div>
+            }
+
+            <h2>Video Editing</h2>
+            <p>Learn about video editing techniques, software tools, and post-production workflows.</p>
+            
+            <div class="content-section">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Video Editing Fundamentals</h4>
+                    </div>
+                    <div class="card-body">
+                        <h5>What is Video Editing?</h5>
+                        <p>Video editing is the process of manipulating and rearranging video shots to create a new work. It involves cutting segments, re-sequencing clips, and adding transitions and effects.</p>
+                        
+                        <h5>Basic Video Editing Workflow</h5>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <ol class="list-group list-group-numbered">
+                                    <li class="list-group-item"><strong>Import:</strong> Bring your raw footage into the editing software</li>
+                                    <li class="list-group-item"><strong>Organize:</strong> Sort and label your clips for easy access</li>
+                                    <li class="list-group-item"><strong>Rough Cut:</strong> Create a basic sequence of your video</li>
+                                    <li class="list-group-item"><strong>Fine Cut:</strong> Refine timing, add transitions, and polish</li>
+                                    <li class="list-group-item"><strong>Color Correction:</strong> Adjust colors and exposure</li>
+                                    <li class="list-group-item"><strong>Audio Editing:</strong> Clean up audio, add music and effects</li>
+                                    <li class="list-group-item"><strong>Export:</strong> Render the final video in desired format</li>
+                                </ol>
+                            </div>
+                        </div>
+
+                        <h5>Essential Editing Techniques</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card mb-3">
+                                    <div class="card-header bg-primary text-white">
+                                        <h6>Cutting and Trimming</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <ul>
+                                            <li>Removing unwanted parts</li>
+                                            <li>Splitting clips</li>
+                                            <li>Adjusting in and out points</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card mb-3">
+                                    <div class="card-header bg-success text-white">
+                                        <h6>Transitions</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <ul>
+                                            <li>Cuts (direct transitions)</li>
+                                            <li>Fades (fade in/out)</li>
+                                            <li>Dissolves (crossfades)</li>
+                                            <li>Wipes and special effects</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h5>Popular Video Editing Software</h5>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="card text-center mb-3">
+                                    <div class="card-body">
+                                        <h6>Adobe Premiere Pro</h6>
+                                        <p>Professional video editing suite</p>
+                                        <span class="badge bg-primary">Professional</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card text-center mb-3">
+                                    <div class="card-body">
+                                        <h6>Final Cut Pro</h6>
+                                        <p>Apple's professional editing software</p>
+                                        <span class="badge bg-primary">Mac Only</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card text-center mb-3">
+                                    <div class="card-body">
+                                        <h6>DaVinci Resolve</h6>
+                                        <p>Professional editing with color grading</p>
+                                        <span class="badge bg-success">Free</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card text-center mb-3">
+                                    <div class="card-body">
+                                        <h6>Adobe After Effects</h6>
+                                        <p>Motion graphics and visual effects</p>
+                                        <span class="badge bg-warning">VFX</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h5>Video Formats and Codecs</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6>Common Video Formats</h6>
+                                <ul>
+                                    <li><strong>MP4:</strong> Most common, good compression</li>
+                                    <li><strong>MOV:</strong> Apple's format, high quality</li>
+                                    <li><strong>AVI:</strong> Uncompressed, large files</li>
+                                    <li><strong>MKV:</strong> Open source, supports multiple tracks</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h6>Popular Codecs</h6>
+                                <ul>
+                                    <li><strong>H.264:</strong> Most widely supported</li>
+                                    <li><strong>H.265 (HEVC):</strong> Better compression</li>
+                                    <li><strong>ProRes:</strong> Professional editing codec</li>
+                                    <li><strong>DNxHD:</strong> Avid's professional codec</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <h5>Audio in Video Editing</h5>
+                        <div class="alert alert-info">
+                            <h6><i class="fas fa-volume-up"></i> Audio Tips</h6>
+                            <ul class="mb-0">
+                                <li>Audio quality is as important as video quality</li>
+                                <li>Use external microphones for better sound</li>
+                                <li>Record room tone for seamless audio editing</li>
+                                <li>Balance dialogue, music, and sound effects</li>
+                                <li>Use audio waveforms to sync clips</li>
+                            </ul>
+                        </div>
+
+                        <h5>Export Settings</h5>
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Platform</th>
+                                        <th>Resolution</th>
+                                        <th>Frame Rate</th>
+                                        <th>Bitrate</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>YouTube 1080p</td>
+                                        <td>1920x1080</td>
+                                        <td>30fps</td>
+                                        <td>8 Mbps</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Instagram</td>
+                                        <td>1080x1080</td>
+                                        <td>30fps</td>
+                                        <td>3.5 Mbps</td>
+                                    </tr>
+                                    <tr>
+                                        <td>TikTok</td>
+                                        <td>1080x1920</td>
+                                        <td>30fps</td>
+                                        <td>2 Mbps</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Web Streaming</td>
+                                        <td>1920x1080</td>
+                                        <td>24-30fps</td>
+                                        <td>5-10 Mbps</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation buttons -->
+            <div class="mt-4">
+                @if (course != null)
+                {
+                    <a href="@Url.Action("Graphics", "UploadedContents", new { courseId = course.CourseId })" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Previous: Graphics
+                    </a>
+                    <a href="@Url.Action("CourseContents", "Content", new { courseId = course.CourseId })" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to Course Contents
+                    </a>
+                    <a href="@Url.Action("Photography", "UploadedContents", new { courseId = course.CourseId })" class="btn btn-primary">
+                        Next: Photography <i class="fas fa-arrow-right"></i>
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
+</div>

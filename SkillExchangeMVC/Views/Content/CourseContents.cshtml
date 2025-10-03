@@ -3,35 +3,339 @@
     var course = ViewBag.Course as SkillExchangeMVC.Models.Course;
     ViewData["Title"] = $"Contents - {course?.Title}";
 }
-<h2>Contents - @course?.Title</h2>
-@if (TempData["Error"] != null)
-{
-    <div class="alert alert-danger">@TempData["Error"]</div>
-}
-<table class="table">
-    <thead>
-        <tr>
-            <th>Title</th>
-            <th>Type</th>
-            <th>Description</th>
-            <th>Open</th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var c in Model)
-{
-    <tr>
-        <td>@c.Title</td>
-        <td>@c.Type</td>
-        <td>@c.Description</td>
-        <td>
-            @if (c.Type == "Link") {
-                <a href="@c.URL" target="_blank">Open Link</a>
-            } else {
-                <a href="@c.URL" target="_blank">Open</a>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h2>Contents - @course?.Title</h2>
+            
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger">@TempData["Error"]</div>
             }
-        </td>
-    </tr>
-}
-    </tbody>
-</table>
+
+            <!-- Course Information -->
+            @if (course != null)
+            {
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h4>Course Information</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Title:</strong> @course.Title</p>
+                                <p><strong>Category:</strong> @course.Category</p>
+                                <p><strong>Sub-Category:</strong> @course.SubCategory</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Description:</strong> @course.Description</p>
+                                <p><strong>Premium Course:</strong> @(course.IsPremium ? "Yes" : "No")</p>
+                                @if (course.Price > 0)
+                                {
+                                    <p><strong>Price:</strong> ?@course.Price</p>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <!-- Specialized Content Topics -->
+            @if (course != null)
+            {
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h4><i class="fas fa-book"></i> Learning Topics</h4>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted mb-3">Explore learning topics specifically for @course.Title:</p>
+                        
+                        <div class="row">
+                            @{
+                                var courseTitle = course.Title.ToLower();
+                                bool hasSpecificContent = false;
+                            }
+
+                            <!-- C# Specific Content -->
+                            @if (courseTitle.Contains("c#") || courseTitle.Contains("csharp"))
+                            {
+                                hasSpecificContent = true;
+                                <div class="col-md-6 mb-3">
+                                    <div class="card h-100">
+                                        <div class="card-header bg-primary text-white">
+                                            <h6><i class="fas fa-code"></i> C# Programming</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="d-grid gap-2">
+                                                <a href="@Url.Action("CSharpMethods", "UploadedContents", new { courseId = course.CourseId })" class="btn btn-outline-primary btn-sm">C# Methods</a>
+                                                <a href="@Url.Action("CSharpOOP", "UploadedContents", new { courseId = course.CourseId })" class="btn btn-outline-primary btn-sm">C# OOP</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+
+                            <!-- Java Specific Content -->
+                            @if (courseTitle.Contains("java"))
+                            {
+                                hasSpecificContent = true;
+                                <div class="col-md-6 mb-3">
+                                    <div class="card h-100">
+                                        <div class="card-header bg-orange text-white" style="background-color: #ff6600;">
+                                            <h6><i class="fas fa-coffee"></i> Java Programming</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="d-grid gap-2">
+                                                <a href="@Url.Action("Java", "UploadedContents", new { courseId = course.CourseId })" class="btn btn-outline-dark btn-sm">Java Programming</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+
+                            <!-- C++ Specific Content -->
+                            @if (courseTitle.Contains("c++") || courseTitle.Contains("cpp"))
+                            {
+                                hasSpecificContent = true;
+                                <div class="col-md-6 mb-3">
+                                    <div class="card h-100">
+                                        <div class="card-header bg-dark text-white">
+                                            <h6><i class="fas fa-code"></i> C++ Programming</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="d-grid gap-2">
+                                                <a href="@Url.Action("CPlusPlus", "UploadedContents", new { courseId = course.CourseId })" class="btn btn-outline-dark btn-sm">C++ Programming</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+
+                            <!-- Graphics Design Specific Content -->
+                            @if (courseTitle.Contains("graphic") || courseTitle.Contains("design"))
+                            {
+                                hasSpecificContent = true;
+                                <div class="col-md-6 mb-3">
+                                    <div class="card h-100">
+                                        <div class="card-header bg-success text-white">
+                                            <h6><i class="fas fa-palette"></i> Graphics Design</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="d-grid gap-2">
+                                                <a href="@Url.Action("Graphics", "UploadedContents", new { courseId = course.CourseId })" class="btn btn-outline-success btn-sm">Graphics Design</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+
+                            <!-- Video Editing Specific Content -->
+                            @if (courseTitle.Contains("video") || courseTitle.Contains("editing"))
+                            {
+                                hasSpecificContent = true;
+                                <div class="col-md-6 mb-3">
+                                    <div class="card h-100">
+                                        <div class="card-header bg-info text-white">
+                                            <h6><i class="fas fa-video"></i> Video Editing</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="d-grid gap-2">
+                                                <a href="@Url.Action("VideoEditing", "UploadedContents", new { courseId = course.CourseId })" class="btn btn-outline-info btn-sm">Video Editing</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+
+                            <!-- Photography Specific Content -->
+                            @if (courseTitle.Contains("photo"))
+                            {
+                                hasSpecificContent = true;
+                                <div class="col-md-6 mb-3">
+                                    <div class="card h-100">
+                                        <div class="card-header bg-warning text-dark">
+                                            <h6><i class="fas fa-camera"></i> Photography</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="d-grid gap-2">
+                                                <a href="@Url.Action("Photography", "UploadedContents", new { courseId = course.CourseId })" class="btn btn-outline-warning btn-sm">Photography</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+
+                            <!-- Marketing Specific Content -->
+                            @if (courseTitle.Contains("marketing"))
+                            {
+                                hasSpecificContent = true;
+                                <div class="col-md-6 mb-3">
+                                    <div class="card h-100">
+                                        <div class="card-header bg-primary text-white">
+                                            <h6><i class="fas fa-bullhorn"></i> Marketing</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="d-grid gap-2">
+                                                <a href="@Url.Action("Marketing", "UploadedContents", new { courseId = course.CourseId })" class="btn btn-outline-primary btn-sm">Marketing</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+
+                            <!-- Entrepreneurship Specific Content -->
+                            @if (courseTitle.Contains("entrepreneur") || courseTitle.Contains("business"))
+                            {
+                                hasSpecificContent = true;
+                                <div class="col-md-6 mb-3">
+                                    <div class="card h-100">
+                                        <div class="card-header bg-success text-white">
+                                            <h6><i class="fas fa-lightbulb"></i> Entrepreneurship</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="d-grid gap-2">
+                                                <a href="@Url.Action("Entrepreneurship", "UploadedContents", new { courseId = course.CourseId })" class="btn btn-outline-success btn-sm">Entrepreneurship</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+
+                            <!-- Leadership Specific Content -->
+                            @if (courseTitle.Contains("leader"))
+                            {
+                                hasSpecificContent = true;
+                                <div class="col-md-6 mb-3">
+                                    <div class="card h-100">
+                                        <div class="card-header bg-info text-white">
+                                            <h6><i class="fas fa-users"></i> Leadership</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="d-grid gap-2">
+                                                <a href="@Url.Action("Leadership", "UploadedContents", new { courseId = course.CourseId })" class="btn btn-outline-info btn-sm">Leadership</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+
+                            <!-- Public Speaking Specific Content -->
+                            @if (courseTitle.Contains("public speaking") || courseTitle.Contains("speaking"))
+                            {
+                                hasSpecificContent = true;
+                                <div class="col-md-6 mb-3">
+                                    <div class="card h-100">
+                                        <div class="card-header bg-secondary text-white">
+                                            <h6><i class="fas fa-microphone"></i> Public Speaking</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="d-grid gap-2">
+                                                <a href="@Url.Action("PublicSpeaking", "UploadedContents", new { courseId = course.CourseId })" class="btn btn-outline-secondary btn-sm">Public Speaking</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+
+                            <!-- If no specific content found, show a message -->
+                            @if (!hasSpecificContent)
+                            {
+                                <div class="col-md-12 mb-3">
+                                    <div class="card">
+                                        <div class="card-header bg-light">
+                                            <h6><i class="fas fa-book"></i> Course Content</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="alert alert-info">
+                                                <i class="fas fa-info-circle"></i> 
+                                                Specialized learning content for "@course.Title" is currently being developed. 
+                                                Check back soon for course-specific materials and resources!
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <!-- Course Materials (Original Content) -->
+            <div class="card">
+                <div class="card-header">
+                    <h4><i class="fas fa-folder-open"></i> Course Materials</h4>
+                </div>
+                <div class="card-body">
+                    @if (Model.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Type</th>
+                                        <th>Description</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                @foreach (var c in Model)
+                                {
+                                    <tr>
+                                        <td>
+                                            <strong>@c.Title</strong>
+                                        </td>
+                                        <td>
+                                            @if (c.Type == "PDF")
+                                            {
+                                                <span class="badge bg-danger"><i class="fas fa-file-pdf"></i> @c.Type</span>
+                                            }
+                                            else if (c.Type == "Video")
+                                            {
+                                                <span class="badge bg-primary"><i class="fas fa-video"></i> @c.Type</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-success"><i class="fas fa-link"></i> @c.Type</span>
+                                            }
+                                        </td>
+                                        <td>@c.Description</td>
+                                        <td>
+                                            @if (c.Type == "Link") 
+                                            {
+                                                <a href="@c.URL" target="_blank" class="btn btn-primary btn-sm">
+                                                    <i class="fas fa-external-link-alt"></i> Open Link
+                                                </a>
+                                            } 
+                                            else 
+                                            {
+                                                <a href="@c.URL" target="_blank" class="btn btn-success btn-sm">
+                                                    <i class="fas fa-eye"></i> View
+                                                </a>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i> No course materials have been uploaded yet. Check back later or explore the learning topics above.
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Back to Courses -->
+            <div class="mt-4">
+                <a href="@Url.Action("IndexCourse", "Course")" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Back to All Courses
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

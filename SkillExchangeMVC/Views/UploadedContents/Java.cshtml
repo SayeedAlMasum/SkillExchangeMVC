@@ -1,0 +1,187 @@
+@{
+    ViewData["Title"] = "Java Programming";
+    var course = ViewBag.Course as SkillExchangeMVC.Models.Course;
+    var courseId = ViewBag.CourseId as int?;
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <!-- Course Navigation -->
+            @if (course != null)
+            {
+                <nav aria-label="breadcrumb" class="mb-4">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="@Url.Action("IndexCourse", "Course")">Courses</a></li>
+                        <li class="breadcrumb-item"><a href="@Url.Action("CourseContents", "Content", new { courseId = course.CourseId })">@course.Title</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Java Programming</li>
+                    </ol>
+                </nav>
+                
+                <div class="alert alert-info">
+                    <strong>Course:</strong> @course.Title <br>
+                    <strong>Category:</strong> @course.Category - @course.SubCategory
+                </div>
+            }
+
+            <h2>Java Programming</h2>
+            <p>This page contains content related to Java Programming.</p>
+            
+            <div class="content-section">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Java Programming Fundamentals</h4>
+                    </div>
+                    <div class="card-body">
+                        <h5>Introduction to Java</h5>
+                        <p>Java is a high-level, object-oriented programming language known for its "write once, run anywhere" philosophy.</p>
+                        
+                        <h5>Key Features</h5>
+                        <ul>
+                            <li><strong>Platform Independent:</strong> Java bytecode runs on any platform with JVM</li>
+                            <li><strong>Object-Oriented:</strong> Everything is an object in Java</li>
+                            <li><strong>Secure:</strong> Built-in security features</li>
+                            <li><strong>Robust:</strong> Strong memory management and exception handling</li>
+                            <li><strong>Multithreaded:</strong> Built-in support for concurrent programming</li>
+                        </ul>
+
+                        <h5>Basic Syntax</h5>
+                        <pre class="bg-light p-3">
+<code>public class HelloWorld {
+    public static void main(String[] args) {
+        System.out.println("Hello, World!");
+    }
+}</code>
+                        </pre>
+
+                        <h5>Data Types</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6>Primitive Data Types</h6>
+                                <ul>
+                                    <li><code>byte</code> - 8-bit integer</li>
+                                    <li><code>short</code> - 16-bit integer</li>
+                                    <li><code>int</code> - 32-bit integer</li>
+                                    <li><code>long</code> - 64-bit integer</li>
+                                    <li><code>float</code> - 32-bit floating point</li>
+                                    <li><code>double</code> - 64-bit floating point</li>
+                                    <li><code>boolean</code> - true/false</li>
+                                    <li><code>char</code> - 16-bit Unicode character</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h6>Example Usage</h6>
+                                <pre class="bg-light p-3">
+<code>int age = 25;
+double salary = 50000.50;
+boolean isStudent = true;
+char grade = 'A';
+String name = "John Doe";</code>
+                                </pre>
+                            </div>
+                        </div>
+
+                        <h5>Classes and Objects</h5>
+                        <pre class="bg-light p-3">
+<code>public class Student {
+    private String name;
+    private int age;
+    
+    // Constructor
+    public Student(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+    
+    // Getter and Setter methods
+    public String getName() {
+        return name;
+    }
+    
+    public void setName(String name) {
+        this.name = name;
+    }
+    
+    public int getAge() {
+        return age;
+    }
+    
+    public void setAge(int age) {
+        this.age = age;
+    }
+    
+    // Method
+    public void displayInfo() {
+        System.out.println("Name: " + name + ", Age: " + age);
+    }
+}
+
+// Using the class
+Student student1 = new Student("Alice", 20);
+student1.displayInfo();</code>
+                        </pre>
+
+                        <h5>Control Structures</h5>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <h6>If-Else</h6>
+                                <pre class="bg-light p-2">
+<code>if (score >= 90) {
+    grade = 'A';
+} else if (score >= 80) {
+    grade = 'B';
+} else {
+    grade = 'C';
+}</code>
+                                </pre>
+                            </div>
+                            <div class="col-md-4">
+                                <h6>For Loop</h6>
+                                <pre class="bg-light p-2">
+<code>for (int i = 0; i < 10; i++) {
+    System.out.println(i);
+}
+
+// Enhanced for loop
+for (String item : list) {
+    System.out.println(item);
+}</code>
+                                </pre>
+                            </div>
+                            <div class="col-md-4">
+                                <h6>While Loop</h6>
+                                <pre class="bg-light p-2">
+<code>int i = 0;
+while (i < 10) {
+    System.out.println(i);
+    i++;
+}
+
+do {
+    // Execute at least once
+} while (condition);</code>
+                                </pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation buttons -->
+            <div class="mt-4">
+                @if (course != null)
+                {
+                    <a href="@Url.Action("CSharpOOP", "UploadedContents", new { courseId = course.CourseId })" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Previous: C# OOP
+                    </a>
+                    <a href="@Url.Action("CourseContents", "Content", new { courseId = course.CourseId })" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to Course Contents
+                    </a>
+                    <a href="@Url.Action("CPlusPlus", "UploadedContents", new { courseId = course.CourseId })" class="btn btn-primary">
+                        Next: C++ <i class="fas fa-arrow-right"></i>
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,181 @@
+@{
+    ViewData["Title"] = "C# Object-Oriented Programming";
+    var course = ViewBag.Course as SkillExchangeMVC.Models.Course;
+    var courseId = ViewBag.CourseId as int?;
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <!-- Course Navigation -->
+            @if (course != null)
+            {
+                <nav aria-label="breadcrumb" class="mb-4">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="@Url.Action("IndexCourse", "Course")">Courses</a></li>
+                        <li class="breadcrumb-item"><a href="@Url.Action("CourseContents", "Content", new { courseId = course.CourseId })">@course.Title</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">C# OOP</li>
+                    </ol>
+                </nav>
+                
+                <div class="alert alert-info">
+                    <strong>Course:</strong> @course.Title <br>
+                    <strong>Category:</strong> @course.Category - @course.SubCategory
+                </div>
+            }
+
+            <h2>C# Object-Oriented Programming</h2>
+            <p>This page contains content related to C# Object-Oriented Programming concepts.</p>
+            
+            <div class="content-section">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>OOP Fundamentals in C#</h4>
+                    </div>
+                    <div class="card-body">
+                        <h5>Four Pillars of OOP</h5>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card mb-3">
+                                    <div class="card-header bg-primary text-white">
+                                        <h6>1. Encapsulation</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <p>Wrapping data and methods into a single unit (class) and controlling access to them.</p>
+                                        <pre class="bg-light p-2">
+<code>public class Person
+{
+    private string name;
+    public string Name 
+    { 
+        get { return name; } 
+        set { name = value; } 
+    }
+}</code>
+                                        </pre>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="card mb-3">
+                                    <div class="card-header bg-success text-white">
+                                        <h6>2. Inheritance</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <p>Creating new classes based on existing classes.</p>
+                                        <pre class="bg-light p-2">
+<code>public class Animal
+{
+    public virtual void Speak() { }
+}
+
+public class Dog : Animal
+{
+    public override void Speak()
+    {
+        Console.WriteLine("Woof!");
+    }
+}</code>
+                                        </pre>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card mb-3">
+                                    <div class="card-header bg-warning text-dark">
+                                        <h6>3. Polymorphism</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <p>Ability to treat objects of different types through the same interface.</p>
+                                        <pre class="bg-light p-2">
+<code>Animal[] animals = {
+    new Dog(),
+    new Cat()
+};
+
+foreach(Animal animal in animals)
+{
+    animal.Speak(); // Different implementations
+}</code>
+                                        </pre>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="card mb-3">
+                                    <div class="card-header bg-info text-white">
+                                        <h6>4. Abstraction</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <p>Hiding complex implementation details and showing only essential features.</p>
+                                        <pre class="bg-light p-2">
+<code>public abstract class Shape
+{
+    public abstract double GetArea();
+}
+
+public class Circle : Shape
+{
+    private double radius;
+    
+    public override double GetArea()
+    {
+        return Math.PI * radius * radius;
+    }
+}</code>
+                                        </pre>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h5>Classes and Objects</h5>
+                        <p><strong>Class:</strong> A blueprint or template for creating objects.</p>
+                        <p><strong>Object:</strong> An instance of a class.</p>
+                        
+                        <pre class="bg-light p-3">
+<code>// Class definition
+public class Car
+{
+    public string Brand { get; set; }
+    public string Model { get; set; }
+    public int Year { get; set; }
+    
+    public void StartEngine()
+    {
+        Console.WriteLine($"{Brand} {Model} engine started!");
+    }
+}
+
+// Creating objects
+Car car1 = new Car { Brand = "Toyota", Model = "Corolla", Year = 2023 };
+Car car2 = new Car { Brand = "Honda", Model = "Civic", Year = 2023 };</code>
+                        </pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation buttons -->
+            <div class="mt-4">
+                @if (course != null)
+                {
+                    <a href="@Url.Action("CSharpMethods", "UploadedContents", new { courseId = course.CourseId })" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Previous: C# Methods
+                    </a>
+                    <a href="@Url.Action("CourseContents", "Content", new { courseId = course.CourseId })" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to Course Contents
+                    </a>
+                    <a href="@Url.Action("Java", "UploadedContents", new { courseId = course.CourseId })" class="btn btn-primary">
+                        Next: Java <i class="fas fa-arrow-right"></i>
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
+</div>
