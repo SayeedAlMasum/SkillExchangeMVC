@@ -42,6 +42,7 @@
         {
             @foreach (var item in Model.Courses)
             {
+                var alreadyEnrolled = Model.EnrolledCourseIds.Contains(item.CourseId);
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="card h-100 course-card">
                         <div class="card-header d-flex justify-content-between align-items-center">
@@ -78,7 +79,19 @@
                             </div>
 
                             <div class="mt-auto">
-                                @if (User.IsInRole("Admin"))
+                                @if (alreadyEnrolled)
+                                {
+                                    <div class="d-grid gap-2">
+                                        <a asp-controller="Content" asp-action="CourseContents" asp-route-courseId="@item.CourseId" class="btn btn-success w-100">
+                                            <i class="fas fa-book-open"></i> Continue Course
+                                        </a>
+                                        <a asp-controller="Quiz" asp-action="ListByCourse" asp-route-courseId="@item.CourseId" 
+                                           class="btn btn-outline-primary btn-sm">
+                                            <i class="fas fa-question-circle"></i> Quizzes
+                                        </a>
+                                    </div>
+                                }
+                                else if (User.IsInRole("Admin"))
                                 {
                                     <div class="btn-group d-flex" role="group">
                                         <a asp-controller="Course" asp-action="AdminEnrollOptions" asp-route-id="@item.CourseId" 
@@ -185,9 +198,8 @@
 
 @section Scripts {
     <script>
-        // Add any additional JavaScript functionality here
+        // Auto-hide alerts after 5 seconds
         document.addEventListener('DOMContentLoaded', function() {
-            // Auto-hide alerts after 5 seconds
             setTimeout(function() {
                 var alerts = document.querySelectorAll('.alert');
                 alerts.forEach(function(alert) {

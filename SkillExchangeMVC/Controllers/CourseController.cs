@@ -28,6 +28,16 @@ namespace SkillExchangeMVC.Controllers
                             .OrderBy(c => c.CourseId)
                             .ToList()
             };
+            // Determine already enrolled courses for current user (Student/Teacher/Admin)
+            var email = User.FindFirstValue(ClaimTypes.Email);
+            var userId = _skillExchangeContext.UserInfo.FirstOrDefault(u => u.Email == email)?.UserInfoId;
+            if (userId != null)
+            {
+                viewModel.EnrolledCourseIds = _skillExchangeContext.Enrollments
+                    .Where(e => e.UserInfoId == userId)
+                    .Select(e => e.CourseId)
+                    .ToList();
+            }
             return View(viewModel);
         }
 
