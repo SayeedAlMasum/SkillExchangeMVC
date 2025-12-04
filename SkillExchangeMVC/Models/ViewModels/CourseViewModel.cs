@@ -10,5 +10,7 @@ namespace SkillExchangeMVC.Models.ViewModels
         public List<SelectListItem>? Teachers { get; set; } = new List<SelectListItem>();
         // Track courses current logged-in user is already enrolled in to hide enroll button
         public List<int> EnrolledCourseIds { get; set; } = new List<int>();
+        // Search functionality
+        public string? SearchTerm { get; set; }
     }
 }

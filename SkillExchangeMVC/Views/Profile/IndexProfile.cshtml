@@ -4,41 +4,99 @@
     ViewData["Title"] = "Profile";
 }
 
+<div class="container mt-5">
+<div class="card shadow-lg">
+  <div class="card-header bg-primary text-white">
+            <h4>Welcome, @Model.Name!</h4>
+        </div>
+        <div class="card-body">
+            <div class="text-center mb-4">
+     @if (!string.IsNullOrEmpty(Model.ProfileImagePath))
+        {
+ <img src="@Model.ProfileImagePath" width="150" height="150" class="rounded-circle border border-primary shadow" alt="Profile Image" />
+       }
+          else
+          {
+                 <div class="d-inline-block">
+       <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center" 
+                style="width: 150px; height: 150px;">
+         <i class="fas fa-user fa-4x text-white"></i>
+        </div>
+        <p class="text-muted mt-2"><small>No profile image uploaded</small></p>
+       </div>
+     }
+ </div>
+
+            <div class="profile-info">
+     <div class="mb-3">
+        <strong><i class="fas fa-envelope text-primary"></i> Email:</strong> 
+          <span class="ms-2">@Model.Email</span>
+        </div>
+         
+<div class="mb-3">
+         <strong><i class="fas fa-map-marker-alt text-primary"></i> Location:</strong> 
+            <span class="ms-2">
+            @if (string.IsNullOrEmpty(Model.Location) || Model.Location == "Unknown")
+          {
+ <span class="text-muted fst-italic">Not specified - 
+             <a asp-action="EditProfile" class="text-decoration-none">Add location</a>
+        </span>
+      }
+       else
+            {
+         @Model.Location
+        }
+           </span>
+ </div>
+   
+      <div class="mb-3">
+          <strong><i class="fas fa-user-tag text-primary"></i> Role:</strong> 
+          <span class="ms-2">
+      <span class="badge bg-@(Model.Role == "Admin" ? "danger" : Model.Role == "Teacher" ? "success" : "info")">
+ @Model.Role
+     </span>
+         </span>
+        </div>
+    </div>
+
+      <div class="mt-4 d-flex gap-2">
+      <a asp-action="EditProfile" class="btn btn-warning">
+ <i class="fas fa-edit"></i> Edit Profile
+        </a>
+    <form asp-controller="Logout" asp-action="IndexLogout" method="post" class="d-inline">
+     <button type="submit" class="btn btn-danger">
+          <i class="fas fa-sign-out-alt"></i> Logout
+         </button>
+         </form>
+            </div>
+  </div>
+    </div>
+</div>
+
+<style>
+    .profile-info {
+        font-size: 1.1rem;
+    }
+    
+    .card {
+        border: none;
+    border-radius: 15px;
+    }
+    
+    .card-header {
+        border-radius: 15px 15px 0 0 !important;
+    }
+</style>
+
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         @if (TempData["SweetAlert"] != null)
-        {
-            var msg = TempData["SweetAlert"].ToString().Split('|');
-            <text>
-                    Swal.fire({ icon: msg[0], text: msg[1] });
-            </text>
+     {
+     <text>
+  var msg = '@TempData["SweetAlert"]'.split('|');
+         Swal.fire({ icon: msg[0], text: msg[1] });
+       </text>
         }
     </script>
 }
-
-<div class="container mt-5">
-    <div class="card shadow-lg">
-        <div class="card-header bg-primary text-white">
-            <h4>Welcome, @Model.Name!</h4>
-        </div>
-        <div class="card-body">
-            @if (!string.IsNullOrEmpty(Model.ProfileImagePath))
-            {
-                <img src="@Model.ProfileImagePath" width="150" height="150" class="rounded-circle border border-dark" />
-            }
-            else
-            {
-                <p>No profile image uploaded.</p>
-            }
-
-            <p><strong>Email:</strong> @Model.Email</p>
-            <p><strong>Location:</strong> @Model.Location</p>
-            <p><strong>Role:</strong> @Model.Role</p>
-            <a asp-action="EditProfile" class="btn btn-warning">Edit Profile</a> <br /><br />
-            <form asp-controller="Logout" asp-action="IndexLogout" method="post">
-                <button type="submit" class="btn btn-danger">Logout</button>
-            </form>
-        </div>
-    </div>
-</div>

@@ -11,7 +11,12 @@ namespace SkillExchangeMVC.Controllers
         [HttpPost]
         public async Task<IActionResult> IndexLogout()
         {
+            // Clear all session data
+            HttpContext.Session.Clear();
+            
+            // Sign out from authentication
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            
             return RedirectToAction("Index", "Home");
         }
     }

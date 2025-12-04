@@ -20,14 +20,27 @@ namespace SkillExchangeMVC.Controllers
         }
 
         [Authorize(Roles = "Admin,Teacher,Student")]
-        public IActionResult IndexCourse()
+        public IActionResult IndexCourse(string searchTerm)
         {
+            var coursesQuery = _skillExchangeContext.Course.AsQueryable();
+
+            // Apply search filter if search term is provided
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                searchTerm = searchTerm.ToLower();
+                coursesQuery = coursesQuery.Where(c => 
+                    c.Title.ToLower().Contains(searchTerm) || 
+                    c.Description.ToLower().Contains(searchTerm) ||
+                    c.Category.ToLower().Contains(searchTerm) ||
+                    c.SubCategory.ToLower().Contains(searchTerm));
+            }
+
             var viewModel = new CourseViewModel
             {
-                Courses = _skillExchangeContext.Course
-                            .OrderBy(c => c.CourseId)
-                            .ToList()
+                Courses = coursesQuery.OrderBy(c => c.CourseId).ToList(),
+                SearchTerm = searchTerm
             };
+
             // Determine already enrolled courses for current user (Student/Teacher/Admin)
             var email = User.FindFirstValue(ClaimTypes.Email);
             var userId = _skillExchangeContext.UserInfo.FirstOrDefault(u => u.Email == email)?.UserInfoId;

@@ -36,8 +36,47 @@
         </div>
     }
 
+    <!-- Search Bar -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="search-container">
+                <form method="get" asp-action="IndexCourse" class="d-flex gap-2">
+                    <div class="input-group flex-grow-1">
+                        <span class="input-group-text bg-white">
+                            <i class="fas fa-search text-primary"></i>
+                        </span>
+                        <input type="text" name="searchTerm" id="searchInput"
+                               class="form-control border-start-0"
+                               placeholder="Search courses by title, category, or description..."
+                               value="@Model.SearchTerm"
+                               autocomplete="off">
+                        @if (!string.IsNullOrEmpty(Model.SearchTerm))
+                        {
+                            <button type="button" class="btn btn-outline-secondary" id="clearSearch" title="Clear search">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        }
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-search"></i> Search
+                    </button>
+                </form>
+            </div>
+            @if (!string.IsNullOrEmpty(Model.SearchTerm))
+            {
+                <div class="mt-2">
+                    <small class="text-muted">
+                        <i class="fas fa-info-circle"></i>
+                        Showing results for: <strong>"@Model.SearchTerm"</strong>
+                        (@Model.Courses.Count course@(Model.Courses.Count != 1 ? "s" : "") found)
+                    </small>
+                </div>
+            }
+        </div>
+    </div>
+
     <!-- Course Cards Layout -->
-    <div class="row">
+    <div class="row" id="courseContainer">
         @if (Model.Courses?.Any() ?? false)
         {
             @foreach (var item in Model.Courses)
@@ -59,7 +98,7 @@
                                     <i class="fas fa-folder"></i> @item.Category > @item.SubCategory
                                 </small>
                             </div>
-                            
+
                             <!-- Price Display -->
                             <div class="mb-3">
                                 @if (item.Price == null || item.Price == 0)
@@ -167,7 +206,20 @@
         {
             <div class="col-12">
                 <div class="alert alert-info text-center">
-                    <i class="fas fa-info-circle"></i> No courses available at the moment.
+                    @if (!string.IsNullOrEmpty(Model.SearchTerm))
+                    {
+                        <i class="fas fa-search"></i>
+                        <p class="mb-2">No courses found matching "<strong>@Model.SearchTerm</strong>"</p>
+                        <a href="@Url.Action("IndexCourse")" class="btn btn-sm btn-primary">
+                            <i class="fas fa-list"></i> View All Courses
+                        </a>
+                    }
+                    else
+                    {
+                        <p class="mb-0">
+                            <i class="fas fa-info-circle"></i> No courses available at the moment.
+                        </p>
+                    }
                 </div>
             </div>
         }
@@ -189,10 +241,38 @@
         color: #2c3e50;
         font-weight: 600;
     }
-    
+  
     .course-price {
         font-size: 1.2rem;
         font-weight: bold;
+    }
+
+    .search-container {
+        background: white;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    }
+
+    .input-group-text {
+        border-right: 0;
+    }
+
+    #searchInput {
+        border-left: 0;
+    }
+
+    #searchInput:focus {
+        box-shadow: none;
+        border-color: #dee2e6;
+    }
+
+    .input-group:focus-within .input-group-text {
+        border-color: #86b7fe;
+    }
+
+    .input-group:focus-within #searchInput {
+        border-color: #86b7fe;
     }
 </style>
 
@@ -209,6 +289,25 @@
                     }
                 });
             }, 5000);
+
+            // Clear search functionality
+            const clearBtn = document.getElementById('clearSearch');
+            if (clearBtn) {
+                clearBtn.addEventListener('click', function() {
+                    window.location.href = '@Url.Action("IndexCourse", "Course")';
+                });
+            }
+
+            // Optional: Submit form on Enter key
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) {
+                searchInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        this.form.submit();
+                    }
+                });
+            }
         });
     </script>
 }

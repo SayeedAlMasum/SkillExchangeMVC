@@ -4,63 +4,107 @@
     ViewData["Title"] = "Edit Profile";
 }
 
-@section Scripts {
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    @if (TempData["SuccessMessage"] != null)
-    {
-        <script>
-            Swal.fire({
-                icon: 'success',
-                title: 'Success!',
-                text: '@TempData["SuccessMessage"]',
-                confirmButtonColor: '#3085d6'
-            });
-        </script>
-    }
-}
-
 <div class="container mt-5">
     <div class="card shadow-lg border-0">
         <div class="card-header bg-primary text-white">
-            <h4>Edit Profile</h4>
-        </div>
-        <div class="card-body">
+      <h4><i class="fas fa-user-edit"></i> Edit Profile</h4>
+     </div>
+    <div class="card-body">
             <form asp-action="EditProfile" enctype="multipart/form-data" method="post">
-                <input type="hidden" asp-for="UserInfoId" />
+       <input type="hidden" asp-for="UserInfoId" />
+<input type="hidden" asp-for="Role" />
+
+           <div class="mb-3">
+         <label asp-for="Name" class="form-label">
+      <i class="fas fa-user"></i> Full Name <span class="text-danger">*</span>
+          </label>
+      <input asp-for="Name" class="form-control" placeholder="Enter your full name" required />
+               <span asp-validation-for="Name" class="text-danger"></span>
+         </div>
+
+ <div class="mb-3">
+  <label asp-for="Email" class="form-label">
+          <i class="fas fa-envelope"></i> Email Address <span class="text-danger">*</span>
+       </label>
+     <input asp-for="Email" class="form-control" type="email" placeholder="your.email@example.com" required />
+         <span asp-validation-for="Email" class="text-danger"></span>
+           </div>
+
+     <div class="mb-3">
+        <label asp-for="Location" class="form-label">
+             <i class="fas fa-map-marker-alt"></i> Location
+        </label>
+        <input asp-for="Location" class="form-control" placeholder="e.g., Dhaka, Bangladesh" />
+        <small class="form-text text-muted">Enter your city and country</small>
+       <span asp-validation-for="Location" class="text-danger"></span>
+       </div>
+
+         <div class="mb-3">
+           <label class="form-label">
+        <i class="fas fa-user-shield"></i> Current Role
+           </label>
+           <input type="text" class="form-control" value="@Model.Role" disabled readonly />
+      <small class="form-text text-muted">Contact admin to change your role</small>
+        </div>
 
                 <div class="mb-3">
-                    <label asp-for="Name" class="form-label"></label>
-                    <input asp-for="Name" class="form-control" />
-                </div>
+  <label class="form-label">
+     <i class="fas fa-image"></i> Profile Image
+      </label>
+      @if (!string.IsNullOrEmpty(Model.ProfileImagePath))
+           {
+       <div class="mb-2">
+                  <img src="@Model.ProfileImagePath" width="100" height="100" class="rounded-circle border border-primary" alt="Current Profile" />
+               <small class="d-block text-muted">Current profile image</small>
+       </div>
+ }
+   <input type="file" name="ProfileImage" class="form-control" accept="image/*" />
+  <small class="form-text text-muted">Upload a new profile picture (JPG, PNG, or GIF)</small>
+       </div>
 
-                <div class="mb-3">
-                    <label asp-for="Email" class="form-label"></label>
-                    <input asp-for="Email" class="form-control" />
-                </div>
-
-                <div class="mb-3">
-                    <label asp-for="Location" class="form-label"></label>
-                    <input asp-for="Location" class="form-control" />
-                </div>
-
-                <div class="mb-3">
-                    <label asp-for="Role" class="form-label"></label>
-                    <select asp-for="Role" class="form-select">
-                        <option value="">Select Role</option>
-                        <option value="Student">Student</option>
-                        <option value="Teacher">Teacher</option>
-                        <option value="Admin">Admin</option>
-                    </select>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Profile Image</label>
-                    <input type="file" name="ProfileImage" class="form-control" />
-                </div>
-
-                <button type="submit" class="btn btn-success">Save Changes</button>
-                <a asp-action="IndexProfile" class="btn btn-secondary ms-2">Back</a>
-            </form>
+   <div class="d-flex gap-2">
+          <button type="submit" class="btn btn-success">
+  <i class="fas fa-save"></i> Save Changes
+     </button>
+     <a asp-action="IndexProfile" class="btn btn-secondary">
+        <i class="fas fa-times"></i> Cancel
+  </a>
+   </div>
+     </form>
         </div>
     </div>
 </div>
+
+<style>
+    .card {
+        border-radius: 15px;
+    }
+    
+    .card-header {
+        border-radius: 15px 15px 0 0 !important;
+  }
+    
+    .form-label {
+        font-weight: 600;
+  }
+</style>
+
+@section Scripts {
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    @* SweetAlert for success messages *@
+  @if (TempData["SuccessMessage"] != null)
+    {
+      <script>
+            Swal.fire({
+        icon: 'success',
+      title: 'Success!',
+        text: '@TempData["SuccessMessage"]',
+    confirmButtonColor: '#3085d6'
+        });
+  </script>
+    }
+    
+    @* Validation scripts *@
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

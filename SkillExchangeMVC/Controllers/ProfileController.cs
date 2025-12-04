@@ -22,12 +22,25 @@ namespace SkillExchangeMVC.Controllers
 
         public IActionResult IndexProfile()
         {
-            var username = User.Identity.Name;
-            var user = _skillExchangeContext.UserInfo.FirstOrDefault(u => u.Name == username);
+            // Use email from claims to identify user (more reliable than name)
+            var email = User.FindFirstValue(ClaimTypes.Email);
+            if (string.IsNullOrEmpty(email))
+            {
+                return RedirectToAction("CreateLogin", "Login");
+            }
 
+            var user = _skillExchangeContext.UserInfo.FirstOrDefault(u => u.Email == email);
+      
+            if (user == null)
+            {
+                // User not found, logout and redirect to login
+                return RedirectToAction("IndexLogout", "Logout");
+            }
+
+            // Update session with current user's profile image
             if (user != null && !string.IsNullOrEmpty(user.ProfileImagePath))
             {
-                HttpContext.Session.SetString("ProfileImage", "/images/" + user.ProfileImagePath);
+                HttpContext.Session.SetString("ProfileImage", user.ProfileImagePath);
             }
             else
             {
@@ -42,6 +55,11 @@ namespace SkillExchangeMVC.Controllers
         public IActionResult EditProfile()
         {
             var email = User.FindFirstValue(ClaimTypes.Email);
+            if (string.IsNullOrEmpty(email))
+            {
+                return RedirectToAction("CreateLogin", "Login");
+            }
+
             var user = _skillExchangeContext.UserInfo.FirstOrDefault(u => u.Email == email);
             if (user == null) return NotFound();
 
@@ -71,10 +89,15 @@ namespace SkillExchangeMVC.Controllers
                 }
 
                 existingUser.ProfileImagePath = $"/images/profile/{fileName}";
-                HttpContext.Session.SetString("ProfileImage", existingUser.ProfileImagePath); 
             }
 
             _skillExchangeContext.SaveChanges();
+
+            // Update session with new profile image
+            if (!string.IsNullOrEmpty(existingUser.ProfileImagePath))
+            {
+                HttpContext.Session.SetString("ProfileImage", existingUser.ProfileImagePath);
+            }
 
             TempData["SweetAlert"] = "success|Profile updated successfully!";
             return RedirectToAction("IndexProfile");
