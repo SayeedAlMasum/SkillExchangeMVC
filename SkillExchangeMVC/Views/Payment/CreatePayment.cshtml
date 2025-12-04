@@ -27,84 +27,36 @@
                         <input type="hidden" name="Course.CourseId" value="@Model.Course?.CourseId" />
                         <input type="hidden" asp-for="Amount" />
 
-                        <!-- Payment Method Selection -->
-                        <div class="form-group mb-3">
-                            <label class="form-label">Select Payment Method</label>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" asp-for="PaymentMethod" value="Card" id="paymentCard">
-                                        <label class="form-check-label" for="paymentCard">
-                                            <i class="fas fa-credit-card"></i> Credit/Debit Card
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" asp-for="PaymentMethod" value="Bkash" id="paymentBkash">
-                                        <label class="form-check-label" for="paymentBkash">
-                                            <i class="fas fa-mobile-alt" style="color: #e2136e;"></i> bKash
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                            <span asp-validation-for="PaymentMethod" class="text-danger"></span>
-                        </div>
-
                         <!-- Card Payment Section -->
                         <div id="cardPaymentSection">
                             <h5 class="mb-3">Card Payment Details</h5>
                             <div class="form-group mb-3">
                                 <label for="CardNumber" class="form-label">Card Number</label>
-                                <input type="text" id="CardNumber" asp-for="CardNumber" class="form-control" placeholder="1234 5678 9012 3456" maxlength="19" />
+                                <input type="text" id="CardNumber" asp-for="CardNumber" class="form-control" placeholder="1234 5678 9012 3456" maxlength="19" required />
                                 <span asp-validation-for="CardNumber" class="text-danger"></span>
                             </div>
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group mb-3">
                                         <label for="ExpiryDate" class="form-label">Expiry Date</label>
-                                        <input type="month" id="ExpiryDate" asp-for="ExpiryDate" class="form-control" />
+                                        <input type="month" id="ExpiryDate" asp-for="ExpiryDate" class="form-control" required />
                                         <span asp-validation-for="ExpiryDate" class="text-danger"></span>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group mb-3">
                                         <label for="CVV" class="form-label">CVV</label>
-                                        <input type="text" id="CVV" asp-for="CVV" class="form-control" placeholder="123" maxlength="4" />
+                                        <input type="text" id="CVV" asp-for="CVV" class="form-control" placeholder="123" maxlength="4" required />
                                         <span asp-validation-for="CVV" class="text-danger"></span>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Bkash Payment Section -->
-                        <div id="bkashPaymentSection" style="display: none;">
-                            <h5 class="mb-3" style="color: #e2136e;">
-                                <i class="fas fa-mobile-alt"></i> bKash Payment Details
-                            </h5>
-                            <div class="form-group mb-3">
-                                <label for="BkashMobileNumber" class="form-label">Mobile Number</label>
-                                <input type="tel" id="BkashMobileNumber" asp-for="BkashMobileNumber" class="form-control" placeholder="01XXXXXXXXX" />
-                                <span asp-validation-for="BkashMobileNumber" class="text-danger"></span>
-                            </div>
-                            <div class="form-group mb-3">
-                                <label for="PayerReference" class="form-label">Reference (Optional)</label>
-                                <input type="text" id="PayerReference" asp-for="PayerReference" class="form-control" placeholder="Your reference" />
-                                <span asp-validation-for="PayerReference" class="text-danger"></span>
-                            </div>
-                            <div class="alert alert-info">
-                                <i class="fas fa-info-circle"></i>
-                                After clicking "Pay with bKash", you will be redirected to the bKash payment gateway.
-                            </div>
-                        </div>
-
-                        <!-- Submit Buttons -->
+                        <!-- Submit Button -->
                         <div class="d-grid gap-2">
                             <button type="submit" id="cardPayButton" class="btn btn-primary btn-lg">
-                                <i class="fas fa-credit-card"></i> Pay ৳@Model.Amount with Card
-                            </button>
-                            <button type="submit" id="bkashPayButton" class="btn btn-lg" style="background-color: #e2136e; color: white; display: none;">
-                                <i class="fas fa-mobile-alt"></i> Pay ৳@Model.Amount with bKash
+                                <i class="fas fa-credit-card"></i> Pay ৳@Model.Amount
                             </button>
                         </div>
 
@@ -122,64 +74,11 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const cardRadio = document.getElementById('paymentCard');
-        const bkashRadio = document.getElementById('paymentBkash');
-        const cardSection = document.getElementById('cardPaymentSection');
-        const bkashSection = document.getElementById('bkashPaymentSection');
-        const cardPayButton = document.getElementById('cardPayButton');
-        const bkashPayButton = document.getElementById('bkashPayButton');
-
-        // Set default selection if not already set
-        if (!cardRadio.checked && !bkashRadio.checked) {
-            cardRadio.checked = true;
-        }
-
-        function togglePaymentSections() {
-            if (cardRadio.checked) {
-                cardSection.style.display = 'block';
-                bkashSection.style.display = 'none';
-                cardPayButton.style.display = 'block';
-                bkashPayButton.style.display = 'none';
-                
-                // Make card fields required for client-side validation
-                document.getElementById('CardNumber').required = true;
-                document.getElementById('ExpiryDate').required = true;
-                document.getElementById('CVV').required = true;
-                document.getElementById('BkashMobileNumber').required = false;
-            } else if (bkashRadio.checked) {
-                cardSection.style.display = 'none';
-                bkashSection.style.display = 'block';
-                cardPayButton.style.display = 'none';
-                bkashPayButton.style.display = 'block';
-                
-                // Make bkash fields required for client-side validation
-                document.getElementById('CardNumber').required = false;
-                document.getElementById('ExpiryDate').required = false;
-                document.getElementById('CVV').required = false;
-                document.getElementById('BkashMobileNumber').required = true;
-            }
-        }
-
         // Format card number input
         document.getElementById('CardNumber').addEventListener('input', function(e) {
             let value = e.target.value.replace(/\s/g, '');
             let formattedValue = value.replace(/(.{4})/g, '$1 ').trim();
             e.target.value = formattedValue;
         });
-
-        // Format mobile number
-        document.getElementById('BkashMobileNumber').addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\D/g, '');
-            if (value.length > 11) {
-                value = value.substring(0, 11);
-            }
-            e.target.value = value;
-        });
-
-        cardRadio.addEventListener('change', togglePaymentSections);
-        bkashRadio.addEventListener('change', togglePaymentSections);
-        
-        // Initialize
-        togglePaymentSections();
     });
 </script>

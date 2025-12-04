@@ -30,12 +30,6 @@ namespace SkillExchangeMVC.Models
         public DateTime? ExpiryDate { get; set; }
         public string? CVV { get; set; }
 
-        // Bkash payment fields
-        public string? BkashPaymentId { get; set; }
-        public string? BkashTransactionId { get; set; }
-        public string? BkashMerchantInvoiceNumber { get; set; }
-        public string? BkashPayerReference { get; set; }
-
         // Navigation properties
         public Course? Course { get; set; }
         public UserInfo? UserInfo { get; set; }

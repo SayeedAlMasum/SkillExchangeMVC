@@ -18,6 +18,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Models\BkashModels\" />
+    <Folder Include="Models\Bkash\" />
+    <Folder Include="Services\" />
     <Folder Include="wwwroot\images\profile\" />
     <Folder Include="wwwroot\requirements\" />
   </ItemGroup>
