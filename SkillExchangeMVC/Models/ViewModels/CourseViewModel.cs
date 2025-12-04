@@ -12,5 +12,7 @@ namespace SkillExchangeMVC.Models.ViewModels
         public List<int> EnrolledCourseIds { get; set; } = new List<int>();
         // Search functionality
         public string? SearchTerm { get; set; }
+        // Grouped courses by category
+        public Dictionary<string, List<Course>>? GroupedCourses { get; set; }
     }
 }

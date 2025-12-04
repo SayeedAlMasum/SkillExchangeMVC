@@ -35,9 +35,19 @@ namespace SkillExchangeMVC.Controllers
                     c.SubCategory.ToLower().Contains(searchTerm));
             }
 
+            // Group courses by category
+            var groupedCourses = coursesQuery
+                .OrderBy(c => c.Category)
+                .ThenBy(c => c.SubCategory)
+                .ThenBy(c => c.Title)
+                .ToList()
+                .GroupBy(c => c.Category)
+                .ToDictionary(g => g.Key, g => g.ToList());
+
             var viewModel = new CourseViewModel
             {
-                Courses = coursesQuery.OrderBy(c => c.CourseId).ToList(),
+                Courses = coursesQuery.OrderBy(c => c.Category).ThenBy(c => c.Title).ToList(),
+                GroupedCourses = groupedCourses,
                 SearchTerm = searchTerm
             };
 

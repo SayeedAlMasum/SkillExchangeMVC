@@ -75,155 +75,187 @@
         </div>
     </div>
 
-    <!-- Course Cards Layout -->
-    <div class="row" id="courseContainer">
-        @if (Model.Courses?.Any() ?? false)
+    @if (Model.GroupedCourses?.Any() ?? false)
+    {
+        @* Category-wise organized display *@
+        @foreach (var categoryGroup in Model.GroupedCourses.OrderBy(g => g.Key))
         {
-            @foreach (var item in Model.Courses)
-            {
-                var alreadyEnrolled = Model.EnrolledCourseIds.Contains(item.CourseId);
-                <div class="col-md-6 col-lg-4 mb-4">
-                    <div class="card h-100 course-card">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <h5 class="card-title mb-0">@item.Title</h5>
-                            @if (item.IsPremium)
-                            {
-                                <span class="badge bg-warning text-dark">Premium</span>
-                            }
-                        </div>
-                        <div class="card-body d-flex flex-column">
-                            <p class="card-text">@item.Description</p>
-                            <div class="mb-2">
-                                <small class="text-muted">
-                                    <i class="fas fa-folder"></i> @item.Category > @item.SubCategory
-                                </small>
-                            </div>
+            <div class="category-section mb-5">
+                <div class="category-header d-flex align-items-center mb-3">
+                    <div class="category-icon me-3">
+                        @switch (categoryGroup.Key)
+                        {
+                            case "Technical":
+                                <i class="fas fa-code fa-2x text-primary"></i>
+                                break;
+                            case "Creative":
+                                <i class="fas fa-palette fa-2x text-danger"></i>
+                                break;
+                            case "Business":
+                                <i class="fas fa-briefcase fa-2x text-success"></i>
+                                break;
+                            case "Personal Development":
+                                <i class="fas fa-user-graduate fa-2x text-info"></i>
+                                break;
+                            default:
+                                <i class="fas fa-book fa-2x text-secondary"></i>
+                                break;
+                        }
+                    </div>
+                    <div>
+                        <h3 class="category-title mb-0">@categoryGroup.Key</h3>
+                        <small class="text-muted">@categoryGroup.Value.Count course@(categoryGroup.Value.Count != 1 ? "s" : "") available</small>
+                    </div>
+                </div>
 
-                            <!-- Price Display -->
-                            <div class="mb-3">
-                                @if (item.Price == null || item.Price == 0)
-                                {
-                                    <h4 class="text-success mb-0">
-                                        <i class="fas fa-tag"></i> FREE
-                                    </h4>
-                                    <small class="text-muted">No payment required</small>
-                                }
-                                else
-                                {
-                                    <h4 class="text-primary mb-0">
-                                        <i class="fas fa-tag"></i> ৳@item.Price
-                                    </h4>
-                                    <small class="text-muted">One-time payment</small>
-                                }
-                            </div>
+                <div class="row">
+                    @foreach (var item in categoryGroup.Value)
+                    {
+                        var alreadyEnrolled = Model.EnrolledCourseIds.Contains(item.CourseId);
+                        <div class="col-md-6 col-lg-4 mb-4">
+                            <div class="card h-100 course-card">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h5 class="card-title mb-0">@item.Title</h5>
+                                    @if (item.IsPremium)
+                                    {
+                                        <span class="badge bg-warning text-dark">Premium</span>
+                                    }
+                                </div>
+                                <div class="card-body d-flex flex-column">
+                                    <p class="card-text">@item.Description</p>
+                                    <div class="mb-2">
+                                        <small class="text-muted">
+                                            <i class="fas fa-folder"></i> @item.Category > @item.SubCategory
+                                        </small>
+                                    </div>
 
-                            <div class="mt-auto">
-                                @if (alreadyEnrolled)
-                                {
-                                    <div class="d-grid gap-2">
-                                        <a asp-controller="Content" asp-action="CourseContents" asp-route-courseId="@item.CourseId" class="btn btn-success w-100">
-                                            <i class="fas fa-book-open"></i> Continue Course
-                                        </a>
-                                        <a asp-controller="Quiz" asp-action="ListByCourse" asp-route-courseId="@item.CourseId" 
-                                           class="btn btn-outline-primary btn-sm">
-                                            <i class="fas fa-question-circle"></i> Quizzes
-                                        </a>
-                                    </div>
-                                }
-                                else if (User.IsInRole("Admin"))
-                                {
-                                    <div class="btn-group d-flex" role="group">
-                                        <a asp-controller="Course" asp-action="AdminEnrollOptions" asp-route-id="@item.CourseId" 
-                                           class="btn btn-secondary btn-sm">
-                                            <i class="fas fa-user-plus"></i> Enroll
-                                        </a>
-                                        <a asp-controller="Quiz" asp-action="ListByCourse" asp-route-courseId="@item.CourseId" 
-                                           class="btn btn-outline-primary btn-sm">
-                                            <i class="fas fa-question-circle"></i> Quizzes
-                                        </a>
-                                    </div>
-                                }
-                                else if (User.IsInRole("Teacher"))
-                                {
-                                    <div class="d-grid gap-2">
+                                    <!-- Price Display -->
+                                    <div class="mb-3">
                                         @if (item.Price == null || item.Price == 0)
                                         {
-                                            <!-- Free Course for Teachers -->
-                                            <form method="post" asp-controller="Course" asp-action="TeacherEnroll" asp-route-id="@item.CourseId">
-                                                <button type="submit" class="btn btn-success w-100">
-                                                    <i class="fas fa-play"></i> Access Free Course
-                                                </button>
-                                            </form>
+                                            <h4 class="text-success mb-0">
+                                                <i class="fas fa-tag"></i> FREE
+                                            </h4>
+                                            <small class="text-muted">No payment required</small>
                                         }
                                         else
                                         {
-                                            <!-- Paid Course for Teachers -->
-                                            <a asp-controller="Payment" asp-action="CreatePayment" asp-route-courseId="@item.CourseId" 
-                                               class="btn btn-primary w-100">
-                                                <i class="fas fa-credit-card"></i> Enroll Now - ৳@item.Price
+                                            <h4 class="text-primary mb-0">
+                                                <i class="fas fa-tag"></i> ৳@item.Price
+                                            </h4>
+                                            <small class="text-muted">One-time payment</small>
+                                        }
+                                    </div>
+
+                                    <div class="mt-auto">
+                                        @if (alreadyEnrolled)
+                                        {
+                                            <div class="d-grid gap-2">
+                                                <a asp-controller="Content" asp-action="CourseContents" asp-route-courseId="@item.CourseId" class="btn btn-success w-100">
+                                                    <i class="fas fa-book-open"></i> Continue Course
+                                                </a>
+                                                <a asp-controller="Quiz" asp-action="ListByCourse" asp-route-courseId="@item.CourseId" 
+                                                   class="btn btn-outline-primary btn-sm">
+                                                    <i class="fas fa-question-circle"></i> Quizzes
+                                                </a>
+                                            </div>
+                                        }
+                                        else if (User.IsInRole("Admin"))
+                                        {
+                                            <div class="btn-group d-flex" role="group">
+                                                <a asp-controller="Course" asp-action="AdminEnrollOptions" asp-route-id="@item.CourseId" 
+                                                   class="btn btn-secondary btn-sm">
+                                                    <i class="fas fa-user-plus"></i> Enroll
+                                                </a>
+                                                <a asp-controller="Quiz" asp-action="ListByCourse" asp-route-courseId="@item.CourseId" 
+                                                   class="btn btn-outline-primary btn-sm">
+                                                    <i class="fas fa-question-circle"></i> Quizzes
+                                                </a>
+                                            </div>
+                                        }
+                                        else if (User.IsInRole("Teacher"))
+                                        {
+                                            <div class="d-grid gap-2">
+                                                @if (item.Price == null || item.Price == 0)
+                                                {
+                                                    <!-- Free Course for Teachers -->
+                                                    <form method="post" asp-controller="Course" asp-action="TeacherEnroll" asp-route-id="@item.CourseId">
+                                                        <button type="submit" class="btn btn-success w-100">
+                                                            <i class="fas fa-play"></i> Access Free Course
+                                                        </button>
+                                                    </form>
+                                                }
+                                                else
+                                                {
+                                                    <!-- Paid Course for Teachers -->
+                                                    <a asp-controller="Payment" asp-action="CreatePayment" asp-route-courseId="@item.CourseId" 
+                                                       class="btn btn-primary w-100">
+                                                        <i class="fas fa-credit-card"></i> Enroll Now - ৳@item.Price
+                                                    </a>
+                                                }
+                                                <a asp-controller="Quiz" asp-action="ListByCourse" asp-route-courseId="@item.CourseId" 
+                                                   class="btn btn-outline-primary btn-sm">
+                                                    <i class="fas fa-question-circle"></i> Manage Quizzes
+                                                </a>
+                                            </div>
+                                        }
+                                        else if (User.IsInRole("Student"))
+                                        {
+                                            @if (item.Price == null || item.Price == 0)
+                                            {
+                                                <!-- Free Course -->
+                                                <form method="post" asp-controller="Course" asp-action="Enroll" asp-route-id="@item.CourseId" class="w-100">
+                                                    <button type="submit" class="btn btn-success w-100">
+                                                        <i class="fas fa-play"></i> Start Free Course
+                                                    </button>
+                                                </form>
+                                            }
+                                            else
+                                            {
+                                                <!-- Paid Course -->
+                                                <a asp-controller="Payment" asp-action="CreatePayment" asp-route-courseId="@item.CourseId" 
+                                                   class="btn btn-primary w-100">
+                                                    <i class="fas fa-credit-card"></i> Enroll Now - ৳@item.Price
+                                                </a>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <!-- Not logged in or other roles -->
+                                            <a href="@Url.Action("CreateLogin", "Login")" class="btn btn-info w-100">
+                                                <i class="fas fa-sign-in-alt"></i> Login to Enroll
                                             </a>
                                         }
-                                        <a asp-controller="Quiz" asp-action="ListByCourse" asp-route-courseId="@item.CourseId" 
-                                           class="btn btn-outline-primary btn-sm">
-                                            <i class="fas fa-question-circle"></i> Manage Quizzes
-                                        </a>
                                     </div>
-                                }
-                                else if (User.IsInRole("Student"))
-                                {
-                                    @if (item.Price == null || item.Price == 0)
-                                    {
-                                        <!-- Free Course -->
-                                        <form method="post" asp-controller="Course" asp-action="Enroll" asp-route-id="@item.CourseId" class="w-100">
-                                            <button type="submit" class="btn btn-success w-100">
-                                                <i class="fas fa-play"></i> Start Free Course
-                                            </button>
-                                        </form>
-                                    }
-                                    else
-                                    {
-                                        <!-- Paid Course -->
-                                        <a asp-controller="Payment" asp-action="CreatePayment" asp-route-courseId="@item.CourseId" 
-                                           class="btn btn-primary w-100">
-                                            <i class="fas fa-credit-card"></i> Enroll Now - ৳@item.Price
-                                        </a>
-                                    }
-                                }
-                                else
-                                {
-                                    <!-- Not logged in or other roles -->
-                                    <a href="@Url.Action("CreateLogin", "Login")" class="btn btn-info w-100">
-                                        <i class="fas fa-sign-in-alt"></i> Login to Enroll
-                                    </a>
-                                }
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-            }
-        }
-        else
-        {
-            <div class="col-12">
-                <div class="alert alert-info text-center">
-                    @if (!string.IsNullOrEmpty(Model.SearchTerm))
-                    {
-                        <i class="fas fa-search"></i>
-                        <p class="mb-2">No courses found matching "<strong>@Model.SearchTerm</strong>"</p>
-                        <a href="@Url.Action("IndexCourse")" class="btn btn-sm btn-primary">
-                            <i class="fas fa-list"></i> View All Courses
-                        </a>
-                    }
-                    else
-                    {
-                        <p class="mb-0">
-                            <i class="fas fa-info-circle"></i> No courses available at the moment.
-                        </p>
                     }
                 </div>
             </div>
         }
-    </div>
+    }
+    else
+    {
+        <div class="col-12">
+            <div class="alert alert-info text-center">
+                @if (!string.IsNullOrEmpty(Model.SearchTerm))
+                {
+                    <i class="fas fa-search"></i>
+                    <p class="mb-2">No courses found matching "<strong>@Model.SearchTerm</strong>"</p>
+                    <a href="@Url.Action("IndexCourse")" class="btn btn-sm btn-primary">
+                        <i class="fas fa-list"></i> View All Courses
+                    </a>
+                }
+                else
+                {
+                    <p class="mb-0">
+                        <i class="fas fa-info-circle"></i> No courses available at the moment.
+                    </p>
+                }
+            </div>
+        </div>
+    }
 </div>
 
 <style>
@@ -273,6 +305,37 @@
 
     .input-group:focus-within #searchInput {
         border-color: #86b7fe;
+    }
+
+    /* Category Section Styling */
+    .category-section {
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 15px;
+        margin-bottom: 30px;
+    }
+
+    .category-header {
+        padding: 15px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .category-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #2c3e50;
+    }
+
+    .category-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 60px;
+        height: 60px;
+        background: #f8f9fa;
+        border-radius: 50%;
     }
 </style>
 
